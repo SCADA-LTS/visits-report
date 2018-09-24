@@ -1,0 +1,26 @@
+plugins {
+    id 'java'
+}
+
+group 'report-to-libre-office'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.10
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile group: 'junit', name: 'junit', version: '4.12'
+}
+
+jar {
+    manifest {
+        attributes(
+                "Class-Path": configurations.compile.collect { it.getName() }.join(' '),
+                'Main-Class': 'org.scada_lts.report_to_libreoffice.App'
+        )
+    }
+}
