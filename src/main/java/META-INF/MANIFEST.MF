@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Class-Path: /usr/lib/libreoffice/program/ /usr/share/java/
+Main-Class: org.scada_lts.report_to_libreoffice.App
+

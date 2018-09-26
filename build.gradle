@@ -5,13 +5,29 @@ plugins {
 group 'report-to-libre-office'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 1.10
+sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
+
+    compile files('libs/noa-libre.jar')
+
+    compile files ('/usr/share/java/juh.jar',
+                   '/usr/share/java/jurt.jar',
+                   '/usr/share/java/ridl.jar',
+                   '/usr/share/java/unoil.jar',
+                   '/usr/share/java/unoloader.jar')
+
+    runtime files ('/usr/share/java/juh.jar',
+                   '/usr/share/java/jurt.jar',
+                   '/usr/share/java/ridl.jar',
+                   '/usr/share/java/unoil.jar',
+                   '/usr/share/java/unoloader.jar')
+
+    
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile group: 'junit', name: 'junit', version: '4.12'
 }
@@ -23,4 +39,14 @@ jar {
                 'Main-Class': 'org.scada_lts.report_to_libreoffice.App'
         )
     }
+}
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'Gradle Jar File Example',
+                'Implementation-Version': version,
+                'Main-Class': 'org.scada_lts.report_to_libreoffice.App'
+    }
+    baseName = project.name + '-all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
 }
