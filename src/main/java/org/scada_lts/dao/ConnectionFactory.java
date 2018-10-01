@@ -1,6 +1,8 @@
 package org.scada_lts.dao;
 
 import org.postgresql.Driver;
+import org.scada_lts.config.Configuration;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -11,9 +13,16 @@ import java.sql.SQLException;
  */
 public class ConnectionFactory {
 
-    public static final String URL = "jdbc:postgresql://localhost:5432/test";
-    public static final String USER = "postgres";
-    public static final String PASS = "password";
+    public static final String URL = preparedURL();
+    public static final String USER = Configuration.getInstance().getConf().getDbuser();
+    public static final String PASS = Configuration.getInstance().getConf().getDbpasswd();
+
+    private static final String preparedURL() {
+        return "jdbc:postgresql://" +
+                Configuration.getInstance().getConf().getDbHost() +
+                ":5432/" +
+                Configuration.getInstance().getConf().getDb();
+    }
 
     public static Connection getConnection()
     {

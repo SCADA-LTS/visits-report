@@ -1,50 +1,39 @@
 package org.scada_lts.report_to_libreoffice;
 
 
-import com.sun.star.awt.Rectangle;
-
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.beans.XPropertySet;
 
-import com.sun.star.chart.XDiagram;
-import com.sun.star.chart.XChartDocument;
-
 import com.sun.star.container.XIndexAccess;
-import com.sun.star.container.XNameAccess;
-import com.sun.star.container.XNameContainer;
-
-import com.sun.star.document.XEmbeddedObjectSupplier;
 
 import com.sun.star.frame.XComponentLoader;
 
 import com.sun.star.frame.XStorable;
 import com.sun.star.lang.XComponent;
-import com.sun.star.lang.XMultiServiceFactory;
 import com.sun.star.lang.XMultiComponentFactory;
 
+import com.sun.star.sheet.*;
 import com.sun.star.uno.UnoRuntime;
-import com.sun.star.uno.XInterface;
 import com.sun.star.uno.XComponentContext;
 
-import com.sun.star.sheet.XCellRangeAddressable;
-import com.sun.star.sheet.XSpreadsheet;
-import com.sun.star.sheet.XSpreadsheets;
-import com.sun.star.sheet.XSpreadsheetDocument;
-
-import com.sun.star.style.XStyleFamiliesSupplier;
-
 import com.sun.star.table.XCell;
-import com.sun.star.table.XCellRange;
-import org.scada_lts.config.Config;
 import org.scada_lts.config.Configuration;
 import org.scada_lts.dao.CountInDayDao;
 import org.scada_lts.model.CountInDay;
+import org.scada_lts.utils.CalculationPositionInCalc;
+import org.scada_lts.utils.DataUtils;
 
 
-import java.util.Date;
-import java.util.Set;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class App {
+
+    private static XCellSeries getCellSeries(
+            XSpreadsheet xSheet, String aRange) {
+        return UnoRuntime.queryInterface(
+                XCellSeries.class, xSheet.getCellRangeByName(aRange));
+    }
 
     public static XComponent xComp = null;
 
@@ -89,20 +78,86 @@ public class App {
 
         p("Creating the Header");
 
+        int year = Configuration.getInstance().getConf().getYear();
+        int month = Configuration.getInstance().getConf().getMonth();
+        SimpleDateFormat sdf = new SimpleDateFormat("yy.MM.dd");
 
-        // get complet data from database;
+        Date startDate = sdf.parse(year + "." + month + ".01");
+        Date endDate = DataUtils.getInstance().getLastDayOfMonth(startDate);
 
-        Set<CountInDay[]> data = new CountInDayDao().getAllLocation();
+        Calendar start = Calendar.getInstance();
+        start.setTime(startDate);
+        Calendar end = Calendar.getInstance();
+        end.setTime(endDate);
 
-        for (CountInDay[] counts : data) {
-            for (CountInDay count : counts) {
-                p(count.toString());
+        for (int i=0; Configuration.getInstance().getConf().getLocalizations().length>i;i++) {
+            insertIntoCell(
+                    0,
+                    37+i,
+                    Configuration.getInstance().getConf().getLocalizations()[i],
+                    xSheet,
+                    "T"
+
+            );
+        }
+
+        for (Date date = start.getTime(); start.before(end); start.add(Calendar.DATE, 1), date = start.getTime()) {
+
+            String dayOfWeek = new SimpleDateFormat("EEEE", Locale.FRANCE).format(date);
+            String firsLetterNameDay = Character.toString(dayOfWeek.toUpperCase().charAt(0));
+            int x = CalculationPositionInCalc.getInstance().getLeftPosition(0, date);
+            int y = 35;
+
+            insertIntoCell(
+                    x,
+                    y,
+                    firsLetterNameDay,
+                    xSheet,
+                    "T"
+
+            );
+
+            boolean isSunday = (date.getDay() == 0);
+            boolean isMonday = (date.getDay() == 1);
+
+            // TODO style RED COLLOR for holidays?
+            for (int i=0; 6>i; i++) {
+                if (isMonday || isSunday) {
+
+                    XPropertySet xPropSet = null;
+
+                    XCell xCell = xSheet.getCellByPosition(x, 37+i);
+
+                    xPropSet = UnoRuntime.queryInterface(com.sun.star.beans.XPropertySet.class, xCell);
+                    xPropSet.setPropertyValue("CharColor", Integer.valueOf(0x003399));
+                    xPropSet.setPropertyValue("IsCellBackgroundTransparent", Boolean.FALSE);
+                    xPropSet.setPropertyValue("CellBackColor", Integer.valueOf(0x99CCFF));
+                }
             }
         }
 
+        // get complet data from database;
+        Set<CountInDay[]> data = new CountInDayDao().getAllLocation();
 
-        insertIntoCell(2, 37, "100", xSheet, "");
+        p("count day in range:" + data.size());
 
+        for (CountInDay[] counts : data) {
+            for (int i = 0; counts.length > i; i++) {
+
+                int x = CalculationPositionInCalc.getInstance().getLeftPosition(0, counts[i].getDate());
+                int y = CalculationPositionInCalc.getInstance().getTopPosition(37, i);
+
+
+                p(counts[i].toString());
+
+                insertIntoCell(
+                        x,
+                        y,
+                        String.valueOf(counts[i].getCountInLocalizations()),
+                        xSheet, "");
+
+            }
+        }
 
         XStorable xStorable = (XStorable) UnoRuntime
                 .queryInterface(XStorable.class, myDoc);
@@ -113,8 +168,8 @@ public class App {
         propertyValues[0].Value = new Boolean(true);
         propertyValues[1] = new PropertyValue();
 
-        // from config path
-        String newReport = "/opt/PRJ/report-to-libreoffice/template_out/" + "report" + new Date().getTime() + ".ods";
+        String dirOut = Configuration.getInstance().getConf().getTemplateOutDir();
+        String newReport = dirOut + "report_" + year + "_" + month + "_" + new Date().getTime() + ".ods";
         xStorable.storeToURL("file:///" + newReport, propertyValues);
 
         p("Saved " + newReport);
@@ -137,7 +192,6 @@ public class App {
         try {
             xMCF = xContext.getServiceManager();
 
-            //TODO check how work in console maybe is not necessary Desktop
             Object oDesktop = xMCF.createInstanceWithContext(
                     "com.sun.star.frame.Desktop", xContext);
 
@@ -146,8 +200,8 @@ public class App {
 
             PropertyValue[] szEmptyArgs = new PropertyValue[0];
 
-            //TODO get path from config
-            String strDoc = "file:/opt/PRJ/report-to-libreoffice/template/Usagers_2018_Frequentation.ods";
+
+            String strDoc = "file:"+Configuration.getInstance().getConf().getTemplateSourceFile();
 
             xComp = xCLoader.loadComponentFromURL(strDoc, "_blank", 0, szEmptyArgs);
             xSpreadSheetDoc = UnoRuntime.queryInterface(
@@ -174,6 +228,9 @@ public class App {
 
         if (flag.equals("V")) {
             xCell.setValue((new Float(theValue)).floatValue());
+        } else if (flag.equals("T")) {
+            com.sun.star.text.XText xText = UnoRuntime.queryInterface(com.sun.star.text.XText.class, xCell);
+            xText.setString(theValue);
         } else {
             xCell.setFormula(theValue);
         }

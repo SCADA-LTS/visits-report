@@ -10,10 +10,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @project count
@@ -21,7 +18,25 @@ import java.util.Set;
  */
 public class CountInDayDao implements ICountInDayDao {
 
-    private static final String SELECT = "SELECT * FROM visitors_by_day_view order by 1";
+    private String formatPartOfDate(int value) {
+        if (value >= 10) {
+            return String.valueOf(value);
+        } else {
+            return "0"+String.valueOf(value);
+        }
+    }
+
+    private String prepareSQL() {
+
+        int year = Configuration.getInstance().getConf().getYear();
+        int month = Configuration.getInstance().getConf().getMonth();
+
+        String select = "SELECT * FROM visitors_by_day_view WHERE \"Date\" ~ '^"
+                + formatPartOfDate(year) + "."
+                + formatPartOfDate(month) + "'";
+
+        return select;
+    }
 
     private CountInDay[] extractCountInDayFromResultSet(ResultSet rs) throws SQLException {
 
@@ -39,7 +54,11 @@ public class CountInDayDao implements ICountInDayDao {
                 countInDay.setDate(date);
                 String localizationName = localizations[i];
                 countInDay.setLocation(localizationName);
-                countInDay.setCountInLocalizations(rs.getInt(localizationName));
+                try {
+                    countInDay.setCountInLocalizations(rs.getInt(localizationName));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
                 counts[i] = countInDay;
             }
@@ -57,7 +76,8 @@ public class CountInDayDao implements ICountInDayDao {
 
         try {
             Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery(SELECT);
+            String sql = prepareSQL();
+            ResultSet rs = stmt.executeQuery(sql);
             Set<CountInDay[]> counts = new HashSet<CountInDay[]>();
             while(rs.next())
             {

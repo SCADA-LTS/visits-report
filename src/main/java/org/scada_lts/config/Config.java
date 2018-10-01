@@ -16,12 +16,14 @@ public class Config {
     private int year;
     private int month;
     private String[] localizations;
+    private String templateSourceFile;
+    private String templateOutDir;
 
     public Config() {
 
     }
 
-    public Config(String dbHost, String db, String dbuser, String dbpasswd, int year, int month, String[] localizations) {
+    public Config(String dbHost, String db, String dbuser, String dbpasswd, int year, int month, String[] localizations, String templateSourceFile, String templateOutDir) {
         this.dbHost = dbHost;
         this.db = db;
         this.dbuser = dbuser;
@@ -29,6 +31,8 @@ public class Config {
         this.year = year;
         this.month = month;
         this.localizations = localizations;
+        this.templateSourceFile = templateSourceFile;
+        this.templateOutDir = templateOutDir;
     }
 
     public String getDbHost() {
@@ -87,6 +91,22 @@ public class Config {
         this.localizations = localizations;
     }
 
+    public String getTemplateSourceFile() {
+        return templateSourceFile;
+    }
+
+    public void setTemplateSourceFile(String templateSourceFile) {
+        this.templateSourceFile = templateSourceFile;
+    }
+
+    public String getTemplateOutDir() {
+        return templateOutDir;
+    }
+
+    public void setTemplateOutDir(String templateOutDir) {
+        this.templateOutDir = templateOutDir;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -98,12 +118,14 @@ public class Config {
                 Objects.equals(db, config.db) &&
                 Objects.equals(dbuser, config.dbuser) &&
                 Objects.equals(dbpasswd, config.dbpasswd) &&
-                Arrays.equals(localizations, config.localizations);
+                Arrays.equals(localizations, config.localizations) &&
+                Objects.equals(templateSourceFile, config.templateSourceFile) &&
+                Objects.equals(templateOutDir, config.templateOutDir);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(dbHost, db, dbuser, dbpasswd, year, month);
+        int result = Objects.hash(dbHost, db, dbuser, dbpasswd, year, month, templateSourceFile, templateOutDir);
         result = 31 * result + Arrays.hashCode(localizations);
         return result;
     }
@@ -118,6 +140,8 @@ public class Config {
                 ", year=" + year +
                 ", month=" + month +
                 ", localizations=" + Arrays.toString(localizations) +
+                ", templateSourceFile='" + templateSourceFile + '\'' +
+                ", templateOutDir='" + templateOutDir + '\'' +
                 '}';
     }
 }

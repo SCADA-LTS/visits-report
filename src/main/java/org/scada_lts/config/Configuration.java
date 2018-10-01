@@ -32,7 +32,7 @@ public class Configuration {
 
         try {
 
-            input = new FileInputStream("./config/conf.properties");
+            input = new FileInputStream("conf.properties");
 
             prop.load(input);
 
@@ -47,6 +47,10 @@ public class Configuration {
             int month = getMonth(tmpMonth);
             String[] localizations = tmpLocalizations.split(",");
 
+            String templateSourceFile = prop.getProperty("template_source");
+            String templateOutDir = prop.getProperty("template_out");
+
+
             conf = new Config(
                     dbHost,
                     db,
@@ -54,7 +58,9 @@ public class Configuration {
                     dbpasswd,
                     year,
                     month,
-                    localizations
+                    localizations,
+                    templateSourceFile,
+                    templateOutDir
             );
 
         } catch (IOException io) {
