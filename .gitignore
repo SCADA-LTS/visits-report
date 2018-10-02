@@ -25,3 +25,8 @@ hs_err_pid*
 # idea
 .idea/**
 
+# project
+config/**
+conf.properties
+template_out/**
+
