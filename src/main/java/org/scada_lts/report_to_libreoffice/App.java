@@ -35,180 +35,180 @@ public class App {
                 XCellSeries.class, xSheet.getCellRangeByName(aRange));
     }
 
-    public static XComponent xComp = null;
+    private static XComponent xComp = null;
 
-    public static void p(String str) {
+    private static void p(String str) {
         System.out.println(str);
     }
 
     public static void main(String[] args) throws Exception {
 
-        p("Start report to libreoffice");
-
-        p(Configuration.getInstance().getConf().toString());
-
-        XComponentContext xContext = null;
-
         try {
-            xContext = com.sun.star.comp.helper.Bootstrap.bootstrap();
-            p("Connected to a running office ...");
-        } catch (Exception e) {
-            e.printStackTrace(System.err);
-            System.exit(1);
-        }
+            p("Start report to Libre Office");
 
-        XSpreadsheetDocument myDoc = null;
+            p(Configuration.getInstance().getConf().toString());
 
-        myDoc = openCalc(xContext);
+            XComponentContext xContext = null;
 
-        XSpreadsheet xSheet = null;
-
-        try {
-            p("Getting spreadsheet");
-            XSpreadsheets xSheets = myDoc.getSheets();
-            XIndexAccess oIndexSheets = UnoRuntime.queryInterface(
-                    XIndexAccess.class, xSheets);
-            xSheet = UnoRuntime.queryInterface(
-                    XSpreadsheet.class, oIndexSheets.getByIndex(0));
-
-        } catch (Exception e) {
-            p("Couldn't get Sheet " + e);
-            e.printStackTrace(System.err);
-        }
-
-        p("Creating the Header");
-
-        int year = Configuration.getInstance().getConf().getYear();
-        int month = Configuration.getInstance().getConf().getMonth();
-        SimpleDateFormat sdf = new SimpleDateFormat("yy.MM.dd");
-
-        Date startDate = sdf.parse(year + "." + month + ".01");
-        Date endDate = DataUtils.getInstance().getLastDayOfMonth(startDate);
-
-        Calendar start = Calendar.getInstance();
-        start.setTime(startDate);
-        Calendar end = Calendar.getInstance();
-        end.setTime(endDate);
-
-        for (int i=0; Configuration.getInstance().getConf().getLocalizations().length>i;i++) {
-            insertIntoCell(
-                    0,
-                    37+i,
-                    Configuration.getInstance().getConf().getLocalizations()[i],
-                    xSheet,
-                    "T"
-
-            );
-        }
-
-        for (Date date = start.getTime(); start.before(end); start.add(Calendar.DATE, 1), date = start.getTime()) {
-
-            String dayOfWeek = new SimpleDateFormat("EEEE", Locale.FRANCE).format(date);
-            String firsLetterNameDay = Character.toString(dayOfWeek.toUpperCase().charAt(0));
-            int x = CalculationPositionInCalc.getInstance().getLeftPosition(0, date);
-            int y = 35;
-
-            insertIntoCell(
-                    x,
-                    y,
-                    firsLetterNameDay,
-                    xSheet,
-                    "T"
-
-            );
-
-            boolean isSunday = (date.getDay() == 0);
-            boolean isMonday = (date.getDay() == 1);
-
-            // TODO style RED COLLOR for holidays?
-            for (int i=0; 6>i; i++) {
-                if (isMonday || isSunday) {
-
-                    XPropertySet xPropSet = null;
-
-                    XCell xCell = xSheet.getCellByPosition(x, 37+i);
-
-                    xPropSet = UnoRuntime.queryInterface(com.sun.star.beans.XPropertySet.class, xCell);
-                    xPropSet.setPropertyValue("CharColor", Integer.valueOf(0x003399));
-                    xPropSet.setPropertyValue("IsCellBackgroundTransparent", Boolean.FALSE);
-                    xPropSet.setPropertyValue("CellBackColor", Integer.valueOf(0x99CCFF));
-                }
+            try {
+                xContext = com.sun.star.comp.helper.Bootstrap.bootstrap();
+                p("Connected to a running office ...");
+            } catch (Exception e) {
+                e.printStackTrace(System.err);
+                System.exit(1);
             }
-        }
 
-        //actualize data in title
+            XSpreadsheetDocument myDoc = openCalc(xContext);
 
-        String monthInFrance = new SimpleDateFormat("MMMM", Locale.FRANCE).format(Configuration.getInstance().getDate());
-        p("date:"+Configuration.getInstance().getDate());
-        p("month:" + monthInFrance);
-        int xMonth = 0;
-        int yMonth = 48;
+            XSpreadsheet xSheet = null;
 
-        insertIntoCell(
-                xMonth,
-                yMonth,
-                "(" + monthInFrance + ")",
-                xSheet,
-                "T"
+            try {
+                p("Getting spreadsheet");
+                XSpreadsheets xSheets = myDoc.getSheets();
+                XIndexAccess oIndexSheets = UnoRuntime.queryInterface(
+                        XIndexAccess.class, xSheets);
+                xSheet = UnoRuntime.queryInterface(
+                        XSpreadsheet.class, oIndexSheets.getByIndex(0));
 
-        );
+            } catch (Exception e) {
+                p("Couldn't get Sheet " + e);
+                e.printStackTrace(System.err);
+            }
 
+            p("Creating the Header");
 
-        // get complet data from database;
-        Set<CountInDay[]> data = new CountInDayDao().getAllLocation();
+            int year = Configuration.getInstance().getConf().getYear();
+            int month = Configuration.getInstance().getConf().getMonth();
+            SimpleDateFormat sdf = new SimpleDateFormat("yy.MM.dd");
 
-        p("count day in range:" + data.size());
+            Date startDate = sdf.parse(year + "." + month + ".01");
+            Date endDate = DataUtils.getInstance().getLastDayOfMonth(startDate);
 
-        for (CountInDay[] counts : data) {
-            for (int i = 0; counts.length > i; i++) {
+            Calendar start = Calendar.getInstance();
+            start.setTime(startDate);
+            Calendar end = Calendar.getInstance();
+            end.setTime(endDate);
 
-                int x = CalculationPositionInCalc.getInstance().getLeftPosition(0, counts[i].getDate());
-                int y = CalculationPositionInCalc.getInstance().getTopPosition(37, i);
+            if (xSheet == null) new Exception("xSheet is null");
 
+            for (int i = 0; Configuration.getInstance().getConf().getLocalizations().length > i; i++) {
+                insertIntoCell(
+                        0,
+                        37 + i,
+                        Configuration.getInstance().getConf().getLocalizations()[i],
+                        xSheet,
+                        "T"
 
-                p(counts[i].toString());
+                );
+            }
+
+            for (Date date = start.getTime(); start.before(end); start.add(Calendar.DATE, 1), date = start.getTime()) {
+
+                String dayOfWeek = new SimpleDateFormat("EEEE", Locale.FRANCE).format(date);
+                String firsLetterNameDay = Character.toString(dayOfWeek.toUpperCase().charAt(0));
+                int x = CalculationPositionInCalc.getInstance().getLeftPosition(0, date);
+                int y = 35;
 
                 insertIntoCell(
                         x,
                         y,
-                        String.valueOf(counts[i].getCountInLocalizations()),
-                        xSheet, "");
+                        firsLetterNameDay,
+                        xSheet,
+                        "T"
 
+                );
+
+                boolean isSunday = (DataUtils.getInstance().getDay(date) == 0);
+                boolean isMonday = (DataUtils.getInstance().getDay(date) == 1);
+
+                for (int i = 0; 6 > i; i++) {
+                    if (isMonday || isSunday) {
+
+                        XCell xCell = xSheet.getCellByPosition(x, 37 + i);
+
+                        XPropertySet xPropSet = UnoRuntime.queryInterface(com.sun.star.beans.XPropertySet.class, xCell);
+                        xPropSet.setPropertyValue("CharColor", Integer.valueOf(0x003399));
+                        xPropSet.setPropertyValue("IsCellBackgroundTransparent", Boolean.FALSE);
+                        xPropSet.setPropertyValue("CellBackColor", Integer.valueOf(0x99CCFF));
+                    }
+                }
             }
+
+            //actualize data in title
+
+            String monthInFrance = new SimpleDateFormat("MMMM", Locale.FRANCE).format(Configuration.getInstance().getDate());
+            p("date:" + Configuration.getInstance().getDate());
+            p("month:" + monthInFrance);
+            int xMonth = 0;
+            int yMonth = 48;
+
+            insertIntoCell(
+                    xMonth,
+                    yMonth,
+                    "(" + monthInFrance + ")",
+                    xSheet,
+                    "T"
+
+            );
+
+
+            // get data from database;
+            Set<CountInDay[]> data = new CountInDayDao().getAllLocation();
+
+            p("count day in range:" + data.size());
+
+            for (CountInDay[] counts : data) {
+                for (int i = 0; counts.length > i; i++) {
+
+                    int x = CalculationPositionInCalc.getInstance().getLeftPosition(0, counts[i].getDate());
+                    int y = CalculationPositionInCalc.getInstance().getTopPosition(37, i);
+
+
+                    p(counts[i].toString());
+
+                    insertIntoCell(
+                            x,
+                            y,
+                            String.valueOf(counts[i].getCountInLocalizations()),
+                            xSheet, "");
+
+                }
+            }
+
+            XStorable xStorable = UnoRuntime
+                    .queryInterface(XStorable.class, myDoc);
+
+            PropertyValue[] propertyValues = new PropertyValue[2];
+            propertyValues[0] = new PropertyValue();
+            propertyValues[0].Name = "Overwrite";
+            propertyValues[0].Value = new Boolean(true);
+            propertyValues[1] = new PropertyValue();
+
+            String dirOut = Configuration.getInstance().getConf().getTemplateOutDir();
+            String newReport = dirOut + "report_" + year + "_" + month + "_" + new Date().getTime() + ".ods";
+            xStorable.storeToURL("file:///" + newReport, propertyValues);
+
+            p("Saved " + newReport);
+            xComp.dispose();
+
+
+            p("done");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        XStorable xStorable = (XStorable) UnoRuntime
-                .queryInterface(XStorable.class, myDoc);
-
-        PropertyValue[] propertyValues = new PropertyValue[2];
-        propertyValues[0] = new PropertyValue();
-        propertyValues[0].Name = "Overwrite";
-        propertyValues[0].Value = new Boolean(true);
-        propertyValues[1] = new PropertyValue();
-
-        String dirOut = Configuration.getInstance().getConf().getTemplateOutDir();
-        String newReport = dirOut + "report_" + year + "_" + month + "_" + new Date().getTime() + ".ods";
-        xStorable.storeToURL("file:///" + newReport, propertyValues);
-
-        p("Saved " + newReport);
-        xComp.dispose();
-
-
-        p("done");
 
         System.exit(0);
 
 
     }
 
-    public static XSpreadsheetDocument openCalc(XComponentContext xContext) {
+    private static XSpreadsheetDocument openCalc(XComponentContext xContext) {
 
-        XMultiComponentFactory xMCF = null;
         XComponentLoader xCLoader;
         XSpreadsheetDocument xSpreadSheetDoc = null;
 
         try {
-            xMCF = xContext.getServiceManager();
+            XMultiComponentFactory xMCF = xContext.getServiceManager();
 
             Object oDesktop = xMCF.createInstanceWithContext(
                     "com.sun.star.frame.Desktop", xContext);
@@ -233,7 +233,7 @@ public class App {
         return xSpreadSheetDoc;
     }
 
-    public static void insertIntoCell(int CellX, int CellY, String theValue,
+    private static void insertIntoCell(int CellX, int CellY, String theValue,
                                       XSpreadsheet TT1, String flag) {
         XCell xCell = null;
 
