@@ -1,7 +1,9 @@
 package org.scada_lts.config;
 
 import org.scada_lts.dao.InterpretedDataForSelectForBefforeMonth;
+import org.scada_lts.utils.DataUtils;
 
+import javax.xml.crypto.Data;
 import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,7 +19,7 @@ public class Configuration {
     private static Configuration ourInstance = new Configuration();
 
     private static final String CURRENT = "current";
-    private static final String BEFFORE = "beffore";
+    private static final String BEFORE = "before";
 
     private boolean monthBeffore = false;
 
@@ -36,8 +38,8 @@ public class Configuration {
         int month = conf.getMonth();
 
         SimpleDateFormat sdf = new SimpleDateFormat("yy.MM.dd");
-        Date date = sdf.parse(year + "." + month + ".01");
-        return date;
+
+        return sdf.parse(year + "." + month + ".01");
     }
 
     private Configuration() {
@@ -103,8 +105,8 @@ public class Configuration {
             return Integer.parseInt(tmpYear);
         } else {
             if (str.equals(CURRENT)) {
-                return new Date().getYear();
-            } else  {
+                return DataUtils.getInstance().getYear();
+            } else {
                 return Integer.valueOf(str);
             }
         }
@@ -112,9 +114,9 @@ public class Configuration {
 
     private int getMonth(String str) {
         if (str.equals(CURRENT)) {
-            return new Date().getMonth();
+            return DataUtils.getInstance().getMonth();
         }
-        if (str.equals(BEFFORE)) {
+        if (str.equals(BEFORE)) {
             String tmpMonth = new InterpretedDataForSelectForBefforeMonth().getMonthInFormatDataBase();
             monthBeffore = true;
             return Integer.parseInt(tmpMonth);

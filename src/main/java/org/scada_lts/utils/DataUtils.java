@@ -34,7 +34,7 @@ public class DataUtils {
     public Date getLastDayOfMonth(Date date) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
-        cal.set(Calendar.DAY_OF_MONTH, cal.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH));
+        cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
         return cal.getTime();
     }
 
@@ -43,4 +43,19 @@ public class DataUtils {
         cal.add(Calendar.MONTH, -1);
         return cal.getTime();
     }
+
+    public int getYear() {
+        return Calendar.getInstance().get(Calendar.YEAR);
+    }
+
+    public int getMonth() {
+        return Calendar.getInstance().get(Calendar.MONTH);
+    }
+
+    public int getDay(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return cal.get(Calendar.DAY_OF_WEEK) -1;
+    }
+
 }
