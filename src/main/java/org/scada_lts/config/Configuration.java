@@ -35,7 +35,7 @@ public class Configuration {
         int year = conf.getYear();
         int month = conf.getMonth();
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yy.mm.dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yy.MM.dd");
         Date date = sdf.parse(year + "." + month + ".01");
         return date;
     }

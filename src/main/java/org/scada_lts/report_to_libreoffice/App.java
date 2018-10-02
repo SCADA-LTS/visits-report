@@ -138,8 +138,9 @@ public class App {
 
         //actualize data in title
 
-        String monthInFrance = new SimpleDateFormat("MMM", Locale.FRANCE).format(Configuration.getInstance().getDate());
-
+        String monthInFrance = new SimpleDateFormat("MMMM", Locale.FRANCE).format(Configuration.getInstance().getDate());
+        p("date:"+Configuration.getInstance().getDate());
+        p("month:" + monthInFrance);
         int xMonth = 0;
         int yMonth = 48;
 
