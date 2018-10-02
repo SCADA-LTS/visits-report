@@ -68,8 +68,11 @@ public class Configuration {
 
             String[] localizations = tmpLocalizations.split(",");
 
-            String templateSourceFile = prop.getProperty("template_source");
+            String templateSourceFileYearly = prop.getProperty("template_source_yearly");
+            String templateSourceFileMonthly = prop.getProperty("template_source_monthly");
+            String type = prop.getProperty("type");
             String templateOutDir = prop.getProperty("template_out");
+
 
             conf = new Config(
                     dbHost,
@@ -80,8 +83,10 @@ public class Configuration {
                     year,
                     month,
                     localizations,
-                    templateSourceFile,
-                    templateOutDir
+                    templateSourceFileYearly,
+                    templateSourceFileMonthly,
+                    templateOutDir,
+                    type
             );
 
 
