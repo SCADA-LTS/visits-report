@@ -3,6 +3,8 @@ package org.scada_lts.config;
 import org.scada_lts.dao.InterpretedDataForSelectForBefforeMonth;
 
 import java.io.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 
@@ -27,6 +29,15 @@ public class Configuration {
 
     public Config getConf() {
         return conf;
+    }
+
+    public Date getDate() throws ParseException {
+        int year = conf.getYear();
+        int month = conf.getMonth();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yy.mm.dd");
+        Date date = sdf.parse(year + "." + month + ".01");
+        return date;
     }
 
     private Configuration() {
@@ -111,6 +122,7 @@ public class Configuration {
             return Integer.valueOf(str);
         }
     }
+
 
 }
 

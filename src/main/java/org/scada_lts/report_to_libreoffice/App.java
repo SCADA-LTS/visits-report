@@ -136,6 +136,23 @@ public class App {
             }
         }
 
+        //actualize data in title
+
+        String monthInFrance = new SimpleDateFormat("MMM", Locale.FRANCE).format(Configuration.getInstance().getDate());
+
+        int xMonth = 0;
+        int yMonth = 48;
+
+        insertIntoCell(
+                xMonth,
+                yMonth,
+                "(" + monthInFrance + ")",
+                xSheet,
+                "T"
+
+        );
+
+
         // get complet data from database;
         Set<CountInDay[]> data = new CountInDayDao().getAllLocation();
 
