@@ -20,7 +20,7 @@ public class ConnectionFactory {
     private static final String preparedURL() {
         return "jdbc:postgresql://" +
                 Configuration.getInstance().getConf().getDbHost() +
-                ":5432/" +
+                ":" + Configuration.getInstance().getConf().getDbPort() + "/" +
                 Configuration.getInstance().getConf().getDb();
     }
 

@@ -10,6 +10,7 @@ import java.util.Objects;
 public class Config {
 
     private String dbHost;
+    private String dbPort;
     private String db;
     private String dbuser;
     private String dbpasswd;
@@ -19,12 +20,14 @@ public class Config {
     private String templateSourceFile;
     private String templateOutDir;
 
+
     public Config() {
 
     }
 
-    public Config(String dbHost, String db, String dbuser, String dbpasswd, int year, int month, String[] localizations, String templateSourceFile, String templateOutDir) {
+    public Config(String dbHost, String dbPort, String db, String dbuser, String dbpasswd, int year, int month, String[] localizations, String templateSourceFile, String templateOutDir) {
         this.dbHost = dbHost;
+        this.dbPort = dbPort;
         this.db = db;
         this.dbuser = dbuser;
         this.dbpasswd = dbpasswd;
@@ -107,6 +110,14 @@ public class Config {
         this.templateOutDir = templateOutDir;
     }
 
+    public String getDbPort() {
+        return dbPort;
+    }
+
+    public void setDbPort(String dbPort) {
+        this.dbPort = dbPort;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -115,6 +126,7 @@ public class Config {
         return year == config.year &&
                 month == config.month &&
                 Objects.equals(dbHost, config.dbHost) &&
+                Objects.equals(dbPort, config.dbPort) &&
                 Objects.equals(db, config.db) &&
                 Objects.equals(dbuser, config.dbuser) &&
                 Objects.equals(dbpasswd, config.dbpasswd) &&
@@ -125,7 +137,7 @@ public class Config {
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(dbHost, db, dbuser, dbpasswd, year, month, templateSourceFile, templateOutDir);
+        int result = Objects.hash(dbHost, dbPort, db, dbuser, dbpasswd, year, month, templateSourceFile, templateOutDir);
         result = 31 * result + Arrays.hashCode(localizations);
         return result;
     }
@@ -134,6 +146,7 @@ public class Config {
     public String toString() {
         return "Config{" +
                 "dbHost='" + dbHost + '\'' +
+                ", dbPort='" + dbPort + '\'' +
                 ", db='" + db + '\'' +
                 ", dbuser='" + dbuser + '\'' +
                 ", dbpasswd='" + dbpasswd + '\'' +

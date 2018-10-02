@@ -37,4 +37,10 @@ public class DataUtils {
         cal.set(Calendar.DAY_OF_MONTH, cal.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH));
         return cal.getTime();
     }
+
+    public Date getBefforeMonth() {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MONTH, -1);
+        return cal.getTime();
+    }
 }
