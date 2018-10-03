@@ -1,15 +1,10 @@
 package org.scada_lts.report_to_libreoffice;
 
-import com.sun.star.beans.PropertyValue;
+
 import com.sun.star.beans.XPropertySet;
-import com.sun.star.container.XIndexAccess;
-import com.sun.star.frame.XStorable;
-import com.sun.star.sheet.XSpreadsheet;
 import com.sun.star.sheet.XSpreadsheetDocument;
-import com.sun.star.sheet.XSpreadsheets;
 import com.sun.star.table.XCell;
 import com.sun.star.uno.UnoRuntime;
-import com.sun.star.uno.XComponentContext;
 import org.scada_lts.config.Configuration;
 import org.scada_lts.dao.CountInDayDao;
 import org.scada_lts.model.CountInDay;
@@ -45,6 +40,8 @@ public class MonthlyReport extends Report implements IReportType, Runnable {
             insertData();
 
             save(doc);
+
+            p("done");
 
 
         } catch (Exception e) {

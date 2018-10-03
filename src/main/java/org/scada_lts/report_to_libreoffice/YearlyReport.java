@@ -1,19 +1,11 @@
 package org.scada_lts.report_to_libreoffice;
 
-import com.sun.star.beans.XPropertySet;
 import com.sun.star.sheet.XSpreadsheetDocument;
-import com.sun.star.table.XCell;
-import com.sun.star.uno.UnoRuntime;
 import org.scada_lts.config.Configuration;
-import org.scada_lts.dao.CountInDayDao;
-import org.scada_lts.model.CountInDay;
+import org.scada_lts.dao.CountInMonthDao;
+import org.scada_lts.model.CountInMonth;
 import org.scada_lts.utils.CalculationPositionInCalc;
-import org.scada_lts.utils.DataUtils;
-
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -21,6 +13,7 @@ import java.util.Set;
  * @autor grzegorz.bylica@gmail.com on 02.10.18
  */
 public class YearlyReport extends Report implements IReportType, Runnable{
+
     @Override
     public void run() {
         try {
@@ -36,6 +29,8 @@ public class YearlyReport extends Report implements IReportType, Runnable{
             insertData();
 
             save(doc);
+
+            p("done");
 
 
         } catch (Exception e) {
@@ -78,7 +73,7 @@ public class YearlyReport extends Report implements IReportType, Runnable{
             insertIntoCell(
                     xMonth,
                     yMonth,
-                    "(" + year + ")",
+                    "(20" + year + ")",
                     xSheet,
                     "T"
 
@@ -93,16 +88,15 @@ public class YearlyReport extends Report implements IReportType, Runnable{
     @Override
     public void insertData() {
 
-        Set<CountInDay[]> data = new CountInDayDao().getAllLocation();
+        Set<CountInMonth[]> data = new CountInMonthDao().getAllLocation();
 
         p("count day in range:" + data.size());
 
-        for (CountInDay[] counts : data) {
+        for (CountInMonth[] counts : data) {
             for (int i = 0; counts.length > i; i++) {
 
-                int x = CalculationPositionInCalc.getInstance().getLeftPosition(0, counts[i].getDate());
+                int x = 1 + counts[i].getMonth();
                 int y = CalculationPositionInCalc.getInstance().getTopPosition(37, i);
-
 
                 p(counts[i].toString());
 

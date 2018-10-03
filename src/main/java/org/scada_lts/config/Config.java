@@ -1,6 +1,5 @@
 package org.scada_lts.config;
 
-import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -10,8 +9,7 @@ import java.util.Objects;
  */
 public class Config {
 
-    private static final String YEARLY = "yearly";
-    private static final String MONTHLY = "monthly";
+
 
     private String dbHost;
     private String dbPort;
@@ -143,13 +141,7 @@ public class Config {
     }
 
     public TypeReport getTypeReport() {
-        if (type.trim().equals(YEARLY)) {
-            return TypeReport.YEARLY;
-        } else if (type.trim().equals(MONTHLY)) {
-            return TypeReport.MONTHLY;
-        }
-        new RuntimeException("Not set type of report");
-        return  null;
+        return CheckTypeReport.getInstance().getTypeReportBaseOnStr(type);
     }
 
     @Override

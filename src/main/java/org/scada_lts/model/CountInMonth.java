@@ -1,6 +1,5 @@
 package org.scada_lts.model;
 
-import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -9,24 +8,24 @@ import java.util.Objects;
  */
 public class CountInMonth {
 
-    private byte month;
+    private int month;
     private int countInLocalizations;
     private String location;
 
     public CountInMonth() {
     }
 
-    public CountInMonth(byte month, int countInLocalizations, String location) {
+    public CountInMonth(int month, int countInLocalizations, String location) {
         this.month = month;
         this.countInLocalizations = countInLocalizations;
         this.location = location;
     }
 
-    public byte getMonth() {
+    public int getMonth() {
         return month;
     }
 
-    public void setMonth(byte month) {
+    public void setMonth(int month) {
         this.month = month;
     }
 

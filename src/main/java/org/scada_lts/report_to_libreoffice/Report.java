@@ -11,7 +11,6 @@ import com.sun.star.sheet.XSpreadsheet;
 import com.sun.star.sheet.XSpreadsheetDocument;
 import com.sun.star.sheet.XSpreadsheets;
 import com.sun.star.table.XCell;
-import com.sun.star.uno.Type;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import org.scada_lts.config.Configuration;
@@ -33,7 +32,7 @@ public class Report extends Log {
                 XCellSeries.class, xSheet.getCellRangeByName(aRange));
     }
 
-    protected static XComponent xComp = null;
+    private static XComponent xComp = null;
 
     protected XSpreadsheet xSheet = null;
 

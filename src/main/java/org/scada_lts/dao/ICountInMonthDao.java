@@ -1,6 +1,5 @@
 package org.scada_lts.dao;
 
-import org.scada_lts.model.CountInDay;
 import org.scada_lts.model.CountInMonth;
 
 import java.util.Set;

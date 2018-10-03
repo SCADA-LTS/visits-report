@@ -54,6 +54,13 @@ public class DataUtils {
         return Calendar.getInstance().get(Calendar.MONTH);
     }
 
+    public int getMonth(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return cal.get(Calendar.MONTH);
+    }
+
+
     public int getDay(Date date) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);

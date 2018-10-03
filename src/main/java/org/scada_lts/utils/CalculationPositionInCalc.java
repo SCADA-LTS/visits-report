@@ -7,6 +7,7 @@ import java.util.Date;
  * @autor grzegorz.bylica@gmail.com on 01.10.18
  */
 public class CalculationPositionInCalc {
+
     private static CalculationPositionInCalc ourInstance = new CalculationPositionInCalc();
 
     public static CalculationPositionInCalc getInstance() {

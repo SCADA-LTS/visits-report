@@ -1,6 +1,5 @@
 package org.scada_lts.dao;
 
-import org.scada_lts.config.Config;
 import org.scada_lts.config.Configuration;
 import org.scada_lts.model.CountInDay;
 
@@ -31,11 +30,9 @@ public class CountInDayDao implements ICountInDayDao {
         int year = Configuration.getInstance().getConf().getYear();
         int month = Configuration.getInstance().getConf().getMonth();
 
-        String select = "SELECT * FROM visitors_by_day_view WHERE \"Date\" ~ '^"
+        return  "SELECT * FROM visitors_by_day_view WHERE \"Date\" ~ '^"
                 + formatPartOfDate(year) + "."
                 + formatPartOfDate(month) + "'";
-
-        return select;
     }
 
     private CountInDay[] extractCountInDayFromResultSet(ResultSet rs) throws SQLException {

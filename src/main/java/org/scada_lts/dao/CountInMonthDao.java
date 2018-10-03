@@ -1,8 +1,8 @@
 package org.scada_lts.dao;
 
 import org.scada_lts.config.Configuration;
-import org.scada_lts.model.CountInDay;
 import org.scada_lts.model.CountInMonth;
+import org.scada_lts.utils.DataUtils;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -29,11 +29,11 @@ public class CountInMonthDao implements ICountInMonthDao {
             Statement stmt = connection.createStatement();
             String sql = prepareSQL();
             ResultSet rs = stmt.executeQuery(sql);
-            Set<CountInDay[]> counts = new HashSet<CountInDay[]>();
+            Set<CountInMonth[]> counts = new HashSet<CountInMonth[]>();
             while(rs.next())
             {
-                CountInDay[] countInDay = extractCountInDayFromResultSet(rs);
-                counts.add(countInDay);
+                CountInMonth[] countInMonth = extractCountInMonthFromResultSet(rs);
+                counts.add(countInMonth);
             }
             return counts;
         } catch (SQLException ex) {
@@ -55,36 +55,34 @@ public class CountInMonthDao implements ICountInMonthDao {
         int year = Configuration.getInstance().getConf().getYear();
         int month = Configuration.getInstance().getConf().getMonth();
 
-        String select = "SELECT * FROM visitors_by_day_view WHERE \"Date\" ~ '^"
-                + formatPartOfDate(year) + "."
-                + formatPartOfDate(month) + "'";
-
-        return select;
+        return "SELECT * FROM visitors_by_month_view WHERE \"date\" ~ '^"
+                + formatPartOfDate(year) + "'";
     }
 
-    private CountInDay[] extractCountInDayFromResultSet(ResultSet rs) throws SQLException {
+    private CountInMonth[] extractCountInMonthFromResultSet(ResultSet rs) throws SQLException {
 
         String[] localizations = Configuration.getInstance().getConf().getLocalizations();
         int countLocalizations = localizations.length;
-        CountInDay[] counts = new CountInDay[countLocalizations];
+        CountInMonth[] counts = new CountInMonth[countLocalizations];
 
         try {
             for (int i = 0; countLocalizations > i; i++) {
 
-                CountInDay countInDay = new CountInDay();
+                CountInMonth countInMonth = new CountInMonth();
                 String strDate = rs.getString(1);
-                DateFormat format = new SimpleDateFormat("yy.MM.dd", Locale.ENGLISH);
+                DateFormat format = new SimpleDateFormat("yy.MM", Locale.ENGLISH);
                 Date date = format.parse(strDate);
-                countInDay.setDate(date);
+                int month = DataUtils.getInstance().getMonth(date);
+                countInMonth.setMonth( month );
                 String localizationName = localizations[i];
-                countInDay.setLocation(localizationName);
+                countInMonth.setLocation(localizationName);
                 try {
-                    countInDay.setCountInLocalizations(rs.getInt(localizationName));
+                    countInMonth.setCountInLocalizations(rs.getInt(localizationName));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
-                counts[i] = countInDay;
+                counts[i] = countInMonth;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -94,8 +92,5 @@ public class CountInMonthDao implements ICountInMonthDao {
 
     }
 
-    @Override
-    public Set<CountInDay[]> getAllLocation() {
 
-    }
 }
