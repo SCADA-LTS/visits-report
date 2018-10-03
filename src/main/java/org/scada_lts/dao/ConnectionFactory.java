@@ -13,18 +13,18 @@ import java.sql.SQLException;
  */
 public class ConnectionFactory {
 
-    public static final String URL = preparedURL();
-    public static final String USER = Configuration.getInstance().getConf().getDbuser();
-    public static final String PASS = Configuration.getInstance().getConf().getDbpasswd();
+    private final String URL = preparedURL();
+    private final String USER = Configuration.getInstance().getConf().getDbuser();
+    private final String PASS = Configuration.getInstance().getConf().getDbpasswd();
 
-    private static final String preparedURL() {
+    private String preparedURL() {
         return "jdbc:postgresql://" +
                 Configuration.getInstance().getConf().getDbHost() +
                 ":" + Configuration.getInstance().getConf().getDbPort() + "/" +
                 Configuration.getInstance().getConf().getDb();
     }
 
-    public static Connection getConnection()
+    public Connection getConnection()
     {
         try {
             DriverManager.registerDriver(new Driver());

@@ -9,6 +9,8 @@ import java.util.Objects;
  */
 public class Config {
 
+
+
     private String dbHost;
     private String dbPort;
     private String db;
@@ -17,15 +19,17 @@ public class Config {
     private int year;
     private int month;
     private String[] localizations;
-    private String templateSourceFile;
+    private String templateSourceFileYearly;
+    private String templateSourceFileMonthly;
     private String templateOutDir;
+    private String type; //yearly, monthly
 
 
     public Config() {
 
     }
 
-    public Config(String dbHost, String dbPort, String db, String dbuser, String dbpasswd, int year, int month, String[] localizations, String templateSourceFile, String templateOutDir) {
+    public Config(String dbHost, String dbPort, String db, String dbuser, String dbpasswd, int year, int month, String[] localizations, String templateSourceFileYearly, String templateSourceFileMonthly, String templateOutDir, String type) {
         this.dbHost = dbHost;
         this.dbPort = dbPort;
         this.db = db;
@@ -34,8 +38,10 @@ public class Config {
         this.year = year;
         this.month = month;
         this.localizations = localizations;
-        this.templateSourceFile = templateSourceFile;
+        this.templateSourceFileYearly = templateSourceFileYearly;
+        this.templateSourceFileMonthly = templateSourceFileMonthly;
         this.templateOutDir = templateOutDir;
+        this.type = type;
     }
 
     public String getDbHost() {
@@ -94,14 +100,6 @@ public class Config {
         this.localizations = localizations;
     }
 
-    public String getTemplateSourceFile() {
-        return templateSourceFile;
-    }
-
-    public void setTemplateSourceFile(String templateSourceFile) {
-        this.templateSourceFile = templateSourceFile;
-    }
-
     public String getTemplateOutDir() {
         return templateOutDir;
     }
@@ -118,8 +116,37 @@ public class Config {
         this.dbPort = dbPort;
     }
 
+    public String getTemplateSourceFileYearly() {
+        return templateSourceFileYearly;
+    }
+
+    public void setTemplateSourceFileYearly(String templateSourceFileYearly) {
+        this.templateSourceFileYearly = templateSourceFileYearly;
+    }
+
+    public String getTemplateSourceFileMonthly() {
+        return templateSourceFileMonthly;
+    }
+
+    public void setTemplateSourceFileMonthly(String templateSourceFileMonthly) {
+        this.templateSourceFileMonthly = templateSourceFileMonthly;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public TypeReport getTypeReport() {
+        return CheckTypeReport.getInstance().getTypeReportBaseOnStr(type);
+    }
+
     @Override
     public boolean equals(Object o) {
+
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Config config = (Config) o;
@@ -131,13 +158,15 @@ public class Config {
                 Objects.equals(dbuser, config.dbuser) &&
                 Objects.equals(dbpasswd, config.dbpasswd) &&
                 Arrays.equals(localizations, config.localizations) &&
-                Objects.equals(templateSourceFile, config.templateSourceFile) &&
-                Objects.equals(templateOutDir, config.templateOutDir);
+                Objects.equals(templateSourceFileYearly, config.templateSourceFileYearly) &&
+                Objects.equals(templateSourceFileMonthly, config.templateSourceFileMonthly) &&
+                Objects.equals(templateOutDir, config.templateOutDir) &&
+                Objects.equals(type, config.type);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(dbHost, dbPort, db, dbuser, dbpasswd, year, month, templateSourceFile, templateOutDir);
+        int result = Objects.hash(dbHost, dbPort, db, dbuser, dbpasswd, year, month, templateSourceFileYearly, templateSourceFileMonthly, templateOutDir, type);
         result = 31 * result + Arrays.hashCode(localizations);
         return result;
     }
@@ -153,8 +182,10 @@ public class Config {
                 ", year=" + year +
                 ", month=" + month +
                 ", localizations=" + Arrays.toString(localizations) +
-                ", templateSourceFile='" + templateSourceFile + '\'' +
+                ", templateSourceFileYearly='" + templateSourceFileYearly + '\'' +
+                ", templateSourceFileMonthly='" + templateSourceFileMonthly + '\'' +
                 ", templateOutDir='" + templateOutDir + '\'' +
+                ", type='" + type + '\'' +
                 '}';
     }
 }

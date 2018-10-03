@@ -38,6 +38,8 @@ public class DataUtils {
         return cal.getTime();
     }
 
+
+
     public Date getBefforeMonth() {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MONTH, -1);
@@ -51,6 +53,13 @@ public class DataUtils {
     public int getMonth() {
         return Calendar.getInstance().get(Calendar.MONTH);
     }
+
+    public int getMonth(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return cal.get(Calendar.MONTH);
+    }
+
 
     public int getDay(Date date) {
         Calendar cal = Calendar.getInstance();

@@ -21,14 +21,12 @@ public class InterpretedDataForSelectForBefforeMonth {
 
     public String getYearInFormatDataBase() {
         DateFormat format = new SimpleDateFormat("yy", Locale.ENGLISH);
-        String yearName = format.format(befforeMonthData);
-        return yearName;
+        return format.format(befforeMonthData);
     }
 
     public String getMonthInFormatDataBase() {
         DateFormat format = new SimpleDateFormat("MM", Locale.ENGLISH);
-        String monthName = format.format(befforeMonthData);
-        return monthName;
+        return format.format(befforeMonthData);
     }
 
 }

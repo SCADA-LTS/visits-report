@@ -3,7 +3,6 @@ package org.scada_lts.config;
 import org.scada_lts.dao.InterpretedDataForSelectForBefforeMonth;
 import org.scada_lts.utils.DataUtils;
 
-import javax.xml.crypto.Data;
 import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -18,7 +17,6 @@ public class Configuration {
 
     private static Configuration ourInstance = new Configuration();
 
-    private static final String CURRENT = "current";
     private static final String BEFORE = "before";
 
     private boolean monthBeffore = false;
@@ -61,15 +59,26 @@ public class Configuration {
             String tmpYear = prop.getProperty("year");
             String tmpMonth = prop.getProperty("month");
             String tmpLocalizations = prop.getProperty("localizations");
+            String type = prop.getProperty("type");
 
-            //We need check month beffore year because can set for month beffore then year is get data from context
-            int month = getMonth(tmpMonth);
-            int year = getYear(tmpYear);
+            TypeReport tr = CheckTypeReport.getInstance().getTypeReportBaseOnStr(type);
+
+            int month = 0;
+            int year = 0;
+            if (tr == TypeReport.YEARLY) {
+                month = 0;
+                year = getYear(tmpYear);
+            } else if (tr == TypeReport.MONTHLY) {
+                month = getMonth(tmpMonth);
+                year = getYear(tmpYear);
+            }
 
             String[] localizations = tmpLocalizations.split(",");
 
-            String templateSourceFile = prop.getProperty("template_source");
+            String templateSourceFileYearly = prop.getProperty("template_source_yearly");
+            String templateSourceFileMonthly = prop.getProperty("template_source_monthly");
             String templateOutDir = prop.getProperty("template_out");
+
 
             conf = new Config(
                     dbHost,
@@ -80,8 +89,10 @@ public class Configuration {
                     year,
                     month,
                     localizations,
-                    templateSourceFile,
-                    templateOutDir
+                    templateSourceFileYearly,
+                    templateSourceFileMonthly,
+                    templateOutDir,
+                    type
             );
 
 
@@ -104,18 +115,12 @@ public class Configuration {
             String tmpYear = new InterpretedDataForSelectForBefforeMonth().getYearInFormatDataBase();
             return Integer.parseInt(tmpYear);
         } else {
-            if (str.equals(CURRENT)) {
-                return DataUtils.getInstance().getYear();
-            } else {
-                return Integer.valueOf(str);
-            }
+            return Integer.valueOf(str);
         }
     }
 
     private int getMonth(String str) {
-        if (str.equals(CURRENT)) {
-            return DataUtils.getInstance().getMonth();
-        }
+
         if (str.equals(BEFORE)) {
             String tmpMonth = new InterpretedDataForSelectForBefforeMonth().getMonthInFormatDataBase();
             monthBeffore = true;
@@ -124,7 +129,6 @@ public class Configuration {
             return Integer.valueOf(str);
         }
     }
-
 
 }
 
