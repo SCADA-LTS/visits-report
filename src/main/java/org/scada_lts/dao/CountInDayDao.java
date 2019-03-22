@@ -30,9 +30,19 @@ public class CountInDayDao implements ICountInDayDao {
         int year = Configuration.getInstance().getConf().getYear();
         int month = Configuration.getInstance().getConf().getMonth();
 
-        return  "SELECT * FROM visitors_by_day_view WHERE \"Date\" ~ '^"
+        System.out.println(year);
+        System.out.println(month);
+
+        /*return  "SELECT * FROM visitors_by_day_view WHERE \"Date\" ~ '^"
                 + formatPartOfDate(year) + "."
-                + formatPartOfDate(month) + "'";
+                + formatPartOfDate(month) + "'";*/
+        String sql = "SELECT * FROM visitors_by_day_view WHERE \"Date\" like '%."
+                + formatPartOfDate(month) + "."
+                + formatPartOfDate(year) + "'";
+
+        System.out.println(sql);
+
+        return sql;
     }
 
     private CountInDay[] extractCountInDayFromResultSet(ResultSet rs) throws SQLException {

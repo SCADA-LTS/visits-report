@@ -55,8 +55,12 @@ public class CountInMonthDao implements ICountInMonthDao {
         int year = Configuration.getInstance().getConf().getYear();
         int month = Configuration.getInstance().getConf().getMonth();
 
-        return "SELECT * FROM visitors_by_month_view WHERE \"date\" ~ '^"
-                + formatPartOfDate(year) + "'";
+        String sql = "SELECT * FROM visitors_by_month_view WHERE \"date\" like '"
+                + formatPartOfDate(year) + ".%'";
+
+        System.out.println(sql);
+
+        return sql;
     }
 
     private CountInMonth[] extractCountInMonthFromResultSet(ResultSet rs) throws SQLException {
