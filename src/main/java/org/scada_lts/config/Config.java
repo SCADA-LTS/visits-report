@@ -9,8 +9,6 @@ import java.util.Objects;
  */
 public class Config {
 
-
-
     private String dbHost;
     private String dbPort;
     private String db;
@@ -23,13 +21,27 @@ public class Config {
     private String templateSourceFileMonthly;
     private String templateOutDir;
     private String type; //yearly, monthly
-
+    private String formatDateForParseInMonthlyReport;
+    private String formatDateForParseInDayReport;
 
     public Config() {
 
     }
 
-    public Config(String dbHost, String dbPort, String db, String dbuser, String dbpasswd, int year, int month, String[] localizations, String templateSourceFileYearly, String templateSourceFileMonthly, String templateOutDir, String type) {
+    public Config(String dbHost,
+                  String dbPort,
+                  String db,
+                  String dbuser,
+                  String dbpasswd,
+                  int year,
+                  int month,
+                  String[] localizations,
+                  String templateSourceFileYearly,
+                  String templateSourceFileMonthly,
+                  String templateOutDir,
+                  String type,
+                  String formatDateForParseInMonthlyReport,
+                  String formatDateForParseInDayReport) {
         this.dbHost = dbHost;
         this.dbPort = dbPort;
         this.db = db;
@@ -42,6 +54,8 @@ public class Config {
         this.templateSourceFileMonthly = templateSourceFileMonthly;
         this.templateOutDir = templateOutDir;
         this.type = type;
+        this.formatDateForParseInDayReport = formatDateForParseInDayReport;
+        this.formatDateForParseInMonthlyReport = formatDateForParseInMonthlyReport;
     }
 
     public String getDbHost() {
@@ -144,9 +158,24 @@ public class Config {
         return CheckTypeReport.getInstance().getTypeReportBaseOnStr(type);
     }
 
+    public String getFormatDateForParseInMonthlyReport() {
+        return formatDateForParseInMonthlyReport;
+    }
+
+    public void setFormatDateForParseInMonthlyReport(String formatDateForParseInMonthlyReport) {
+        this.formatDateForParseInMonthlyReport = formatDateForParseInMonthlyReport;
+    }
+
+    public String getFormatDateForParseInDayReport() {
+        return formatDateForParseInDayReport;
+    }
+
+    public void setFormatDateForParseInDayReport(String formatDateForParseInDayReport) {
+        this.formatDateForParseInDayReport = formatDateForParseInDayReport;
+    }
+
     @Override
     public boolean equals(Object o) {
-
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Config config = (Config) o;
@@ -161,12 +190,14 @@ public class Config {
                 Objects.equals(templateSourceFileYearly, config.templateSourceFileYearly) &&
                 Objects.equals(templateSourceFileMonthly, config.templateSourceFileMonthly) &&
                 Objects.equals(templateOutDir, config.templateOutDir) &&
-                Objects.equals(type, config.type);
+                Objects.equals(type, config.type) &&
+                Objects.equals(formatDateForParseInMonthlyReport, config.formatDateForParseInMonthlyReport) &&
+                Objects.equals(formatDateForParseInDayReport, config.formatDateForParseInDayReport);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(dbHost, dbPort, db, dbuser, dbpasswd, year, month, templateSourceFileYearly, templateSourceFileMonthly, templateOutDir, type);
+        int result = Objects.hash(dbHost, dbPort, db, dbuser, dbpasswd, year, month, templateSourceFileYearly, templateSourceFileMonthly, templateOutDir, type, formatDateForParseInMonthlyReport, formatDateForParseInDayReport);
         result = 31 * result + Arrays.hashCode(localizations);
         return result;
     }
@@ -186,6 +217,8 @@ public class Config {
                 ", templateSourceFileMonthly='" + templateSourceFileMonthly + '\'' +
                 ", templateOutDir='" + templateOutDir + '\'' +
                 ", type='" + type + '\'' +
+                ", formatDateForParseInMonthlyReport='" + formatDateForParseInMonthlyReport + '\'' +
+                ", formatDateForParseInDayReport='" + formatDateForParseInDayReport + '\'' +
                 '}';
     }
 }

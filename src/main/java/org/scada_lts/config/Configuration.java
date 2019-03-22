@@ -60,6 +60,8 @@ public class Configuration {
             String tmpMonth = prop.getProperty("month");
             String tmpLocalizations = prop.getProperty("localizations");
             String type = prop.getProperty("type");
+            String formatDateForParseInMonthlyReport = prop.getProperty("formatDateForParseInMonthlyReport");
+            String formatDateForParseInDayReport = prop.getProperty("formatDateForParseInDayReport");
 
             TypeReport tr = CheckTypeReport.getInstance().getTypeReportBaseOnStr(type);
 
@@ -92,7 +94,9 @@ public class Configuration {
                     templateSourceFileYearly,
                     templateSourceFileMonthly,
                     templateOutDir,
-                    type
+                    type,
+                    formatDateForParseInMonthlyReport,
+                    formatDateForParseInDayReport
             );
 
 
