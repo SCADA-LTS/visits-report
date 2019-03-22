@@ -70,6 +70,8 @@ public class CountInMonthDao implements ICountInMonthDao {
 
                 CountInMonth countInMonth = new CountInMonth();
                 String strDate = rs.getString(1);
+                // "yy.MM"
+                String formtDate = Configuration.getInstance().getConf().getFormatDateForParseInMonthlyReport();
                 DateFormat format = new SimpleDateFormat("yy.MM", Locale.ENGLISH);
                 Date date = format.parse(strDate);
                 int month = DataUtils.getInstance().getMonth(date);

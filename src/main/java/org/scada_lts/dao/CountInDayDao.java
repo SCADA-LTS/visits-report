@@ -46,7 +46,9 @@ public class CountInDayDao implements ICountInDayDao {
 
                 CountInDay countInDay = new CountInDay();
                 String strDate = rs.getString(1);
-                DateFormat format = new SimpleDateFormat("yy.MM.dd", Locale.ENGLISH);
+                // eg. yy.MM.dd
+                String formatDate = Configuration.getInstance().getConf().getFormatDateForParseInDayReport();
+                DateFormat format = new SimpleDateFormat(formatDate, Locale.ENGLISH);
                 Date date = format.parse(strDate);
                 countInDay.setDate(date);
                 String localizationName = localizations[i];
