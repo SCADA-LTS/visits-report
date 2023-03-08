@@ -1,25 +1,23 @@
 package org.scada_lts.config;
 
-import org.scada_lts.dao.InterpretedDataForSelectForBefforeMonth;
-import org.scada_lts.utils.DataUtils;
+import org.scada_lts.utils.BeforeDate;
 
 import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
 
+import static org.scada_lts.report_to_libreoffice.PrintLog.error;
+
 /**
  * @project count
- * @autor grzegorz.bylica@gmail.com on 27.09.18
+ * @author grzegorz.bylica@gmail.com on 03.10.18, kamiljarmusik on 03.03.23
  */
 public class Configuration {
 
     private static Configuration ourInstance = new Configuration();
-
-    private static final String BEFORE = "before";
-
-    private boolean monthBeffore = false;
 
     private Config conf;
 
@@ -43,96 +41,65 @@ public class Configuration {
     private Configuration() {
 
         Properties prop = new Properties();
-        InputStream input = null;
 
-        try {
-
-            input = new FileInputStream("conf.properties");
+        try(InputStream input = new FileInputStream("conf.properties")) {
 
             prop.load(input);
 
-            String dbHost = prop.getProperty("dbHost");
-            String dbPort = prop.getProperty("dbPort");
-            String db = prop.getProperty("db");
-            String dbuser = prop.getProperty("dbuser");
-            String dbpasswd = prop.getProperty("dbpassword");
-            String tmpYear = prop.getProperty("year");
-            String tmpMonth = prop.getProperty("month");
-            String tmpLocalizations = prop.getProperty("localizations");
-            String type = prop.getProperty("type");
-            String formatDateForParseInMonthlyReport = prop.getProperty("formatDateForParseInMonthlyReport");
-            String formatDateForParseInDayReport = prop.getProperty("formatDateForParseInDayReport");
+            String dbUrl = prop.getProperty("report.db.url");
+            String dbDriver = prop.getProperty("report.db.driver");
+            String dbuser = prop.getProperty("report.db.user");
+            String dbpasswd = prop.getProperty("report.db.password");
+            String tmpYear = prop.getProperty("report.year");
+            String tmpMonth = prop.getProperty("report.month");
+            String tmpDay = prop.getProperty("report.day");
+            String tmpBefore = prop.getProperty("report.before");
 
-            TypeReport tr = CheckTypeReport.getInstance().getTypeReportBaseOnStr(type);
+            String tmpLocalizations = prop.getProperty("report.localizations");
+            String type = prop.getProperty("report.type");
 
-            int month = 0;
-            int year = 0;
-            if (tr == TypeReport.YEARLY) {
-                month = 0;
-                year = getYear(tmpYear);
-            } else if (tr == TypeReport.MONTHLY) {
-                month = getMonth(tmpMonth);
-                year = getYear(tmpYear);
-            }
+            String formatDateForParseInMonthlyReport = prop.getProperty("report.formatDateForParseInMonthlyReport");
+            String formatDateForParseInDayReport = prop.getProperty("report.formatDateForParseInDayReport");
+            String formatDateForParseInHourReport = prop.getProperty("report.formatDateForParseInHourReport");
+
+
+            TypeReport tr = type == null ? TypeReport.MONTHLY : TypeReport.typeOf(type);
+
+            BeforeDate beforeDate = new BeforeDate(tmpDay, tmpMonth, tmpYear, tr, Boolean.parseBoolean(tmpBefore));
 
             String[] localizations = tmpLocalizations.split(",");
 
-            String templateSourceFileYearly = prop.getProperty("template_source_yearly");
-            String templateSourceFileMonthly = prop.getProperty("template_source_monthly");
-            String templateOutDir = prop.getProperty("template_out");
+            String templateSourceFileYearly = prop.getProperty("report.template_source_yearly");
+            String templateSourceFileMonthly = prop.getProperty("report.template_source_monthly");
+            String templateSourceFileDaily = prop.getProperty("report.template_source_daily");
+            String templateOutDir = prop.getProperty("report.out");
 
 
             conf = new Config(
-                    dbHost,
-                    dbPort,
-                    db,
+                    dbUrl,
+                    dbDriver,
                     dbuser,
                     dbpasswd,
-                    year,
-                    month,
+                    beforeDate.getYear(),
+                    beforeDate.getMonth(),
+                    beforeDate.getDay(),
                     localizations,
                     templateSourceFileYearly,
                     templateSourceFileMonthly,
+                    templateSourceFileDaily,
                     templateOutDir,
-                    type,
+                    tr.toString(),
                     formatDateForParseInMonthlyReport,
-                    formatDateForParseInDayReport
+                    formatDateForParseInDayReport,
+                    formatDateForParseInHourReport
             );
 
 
-        } catch (IOException io) {
-            io.printStackTrace();
-        } finally {
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
+        } catch (Exception e) {
+            error(e.getMessage(), e);
         }
     }
 
-    private int getYear(String str) {
-        if (monthBeffore) {
-            String tmpYear = new InterpretedDataForSelectForBefforeMonth().getYearInFormatDataBase();
-            return Integer.parseInt(tmpYear);
-        } else {
-            return Integer.valueOf(str);
-        }
-    }
-
-    private int getMonth(String str) {
-
-        if (str.equals(BEFORE)) {
-            String tmpMonth = new InterpretedDataForSelectForBefforeMonth().getMonthInFormatDataBase();
-            monthBeffore = true;
-            return Integer.parseInt(tmpMonth);
-        } else {
-            return Integer.valueOf(str);
-        }
-    }
 
 }
 

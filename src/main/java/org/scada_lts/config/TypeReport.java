@@ -1,10 +1,22 @@
 package org.scada_lts.config;
 
+import java.util.stream.Stream;
+
 /**
  * @project count
- * @autor grzegorz.bylica@gmail.com on 02.10.18
+ * @author grzegorz.bylica@gmail.com on 03.10.18, kamiljarmusik on 03.03.23
  */
 public enum TypeReport {
     YEARLY,
-    MONTHLY
+    MONTHLY,
+    DAILY;
+
+    public static TypeReport typeOf(String name) {
+        if(name == null)
+            return TypeReport.MONTHLY;
+        return Stream.of(TypeReport.values())
+                .filter(a -> a.name().equals(name.toUpperCase()))
+                .findAny()
+                .orElse(TypeReport.MONTHLY);
+    }
 }

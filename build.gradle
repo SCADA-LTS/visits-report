@@ -11,45 +11,50 @@ repositories {
     mavenCentral()
 }
 
+configurations {
+    implementation {
+        canBeResolved = true
+    }
+}
+
 dependencies {
 
-    
+    implementation fileTree(include: ['*.jar'], dir: 'lib')
+    runtimeOnly fileTree(include: ['*.jar'], dir: 'lib')
 
-    compile files ('/usr/share/java/juh.jar',
-                   '/usr/share/java/jurt.jar',
-                   '/usr/share/java/ridl.jar',
-                   '/usr/share/java/unoil.jar',
-                   '/usr/share/java/unoloader.jar')
+    implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.23'
+    runtimeOnly group: 'org.postgresql', name: 'postgresql', version: '42.2.23'
 
-    runtime files ('/usr/share/java/juh.jar',
-                   '/usr/share/java/jurt.jar',
-                   '/usr/share/java/ridl.jar',
-                   '/usr/share/java/unoil.jar',
-                   '/usr/share/java/unoloader.jar')
+    testImplementation group: 'junit', name: 'junit', version: '4.12'
 
-    compile group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
-    runtime group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
-
-    
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-    compile group: 'junit', name: 'junit', version: '4.12'
 }
 
 jar {
     manifest {
-        attributes(
-                "Class-Path": configurations.compile.collect { it.getName() }.join(' '),
+        attributes 'Implementation-Title': 'Gradle Jar File Example',
+                'Implementation-Version': version,
+                "Class-Path": configurations.implementation.collect { 'lib' + File.separatorChar + it.getName() }.join(' '),
                 'Main-Class': 'org.scada_lts.report_to_libreoffice.App'
-        )
     }
 }
+
 task fatJar(type: Jar) {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
         attributes 'Implementation-Title': 'Gradle Jar File Example',
                 'Implementation-Version': version,
                 'Main-Class': 'org.scada_lts.report_to_libreoffice.App'
     }
-    baseName = project.name + '-all'
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    baseName = project.name + '-standalone'
+    from {
+        configurations.implementation.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    exclude "**/Log4j2Plugins.dat"
     with jar
+}
+
+test {
+    filter {
+        includeTestsMatching "org.scada_lts.utils.BeforeDateTest"
+    }
 }

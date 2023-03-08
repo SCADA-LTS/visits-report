@@ -5,89 +5,68 @@ import java.util.Objects;
 
 /**
  * @project count
- * @autor grzegorz.bylica@gmail.com on 28.09.18
+ * @author grzegorz.bylica@gmail.com on 03.10.18, kamiljarmusik on 03.03.23
  */
 public class Config {
 
-    private String dbHost;
-    private String dbPort;
-    private String db;
-    private String dbuser;
-    private String dbpasswd;
+    private String dbUrl;
+    private String dbDriver;
+    private String dbUser;
+    private String dbPassword;
     private int year;
     private int month;
+    private int day;
     private String[] localizations;
     private String templateSourceFileYearly;
     private String templateSourceFileMonthly;
+    private String templateSourceFileDaily;
     private String templateOutDir;
     private String type; //yearly, monthly
     private String formatDateForParseInMonthlyReport;
     private String formatDateForParseInDayReport;
+    private String formatDateForParseInHourReport;
 
     public Config() {
 
     }
 
-    public Config(String dbHost,
-                  String dbPort,
-                  String db,
-                  String dbuser,
-                  String dbpasswd,
-                  int year,
-                  int month,
-                  String[] localizations,
-                  String templateSourceFileYearly,
-                  String templateSourceFileMonthly,
-                  String templateOutDir,
-                  String type,
-                  String formatDateForParseInMonthlyReport,
-                  String formatDateForParseInDayReport) {
-        this.dbHost = dbHost;
-        this.dbPort = dbPort;
-        this.db = db;
-        this.dbuser = dbuser;
-        this.dbpasswd = dbpasswd;
+    public Config(String dbUrl, String dbDriver, String dbuser, String dbpasswd, int year, int month, int day,
+                  String[] localizations, String templateSourceFileYearly, String templateSourceFileMonthly,
+                  String templateSourceFileDaily, String templateOutDir, String type,
+                  String formatDateForParseInMonthlyReport, String formatDateForParseInDayReport,
+                  String formatDateForParseInHourReport) {
+        this.dbUrl = dbUrl;
+        this.dbDriver = dbDriver;
+        this.dbUser = dbuser;
+        this.dbPassword = dbpasswd;
         this.year = year;
         this.month = month;
+        this.day = day;
         this.localizations = localizations;
         this.templateSourceFileYearly = templateSourceFileYearly;
         this.templateSourceFileMonthly = templateSourceFileMonthly;
+        this.templateSourceFileDaily = templateSourceFileDaily;
         this.templateOutDir = templateOutDir;
         this.type = type;
-        this.formatDateForParseInDayReport = formatDateForParseInDayReport;
         this.formatDateForParseInMonthlyReport = formatDateForParseInMonthlyReport;
+        this.formatDateForParseInDayReport = formatDateForParseInDayReport;
+        this.formatDateForParseInHourReport = formatDateForParseInHourReport;
     }
 
-    public String getDbHost() {
-        return dbHost;
+    public String getDbUser() {
+        return dbUser;
     }
 
-    public void setDbHost(String dbHost) {
-        this.dbHost = dbHost;
+    public void setDbUser(String dbUser) {
+        this.dbUser = dbUser;
     }
 
-    public String getDb() {
-        return db;
+    public String getDbPassword() {
+        return dbPassword;
     }
 
-    public void setDb(String db) {
-        this.db = db;
-    }
-
-    public String getDbuser() {
-        return dbuser;
-    }
-
-    public void setDbuser(String dbuser) {
-        this.dbuser = dbuser;
-    }
-
-    public String getDbpasswd() {
-        return dbpasswd;
-    }
-
-    public void setDbpasswd(String dbpasswd) {
-        this.dbpasswd = dbpasswd;
+    public void setDbPassword(String dbPassword) {
+        this.dbPassword = dbPassword;
     }
 
     public int getYear() {
@@ -106,6 +85,14 @@ public class Config {
         this.month = month;
     }
 
+    public int getDay() {
+        return day;
+    }
+
+    public void setDay(int day) {
+        this.day = day;
+    }
+
     public String[] getLocalizations() {
         return localizations;
     }
@@ -122,12 +109,12 @@ public class Config {
         this.templateOutDir = templateOutDir;
     }
 
-    public String getDbPort() {
-        return dbPort;
+    public String getDbUrl() {
+        return dbUrl;
     }
 
-    public void setDbPort(String dbPort) {
-        this.dbPort = dbPort;
+    public void setDbUrl(String dbUrl) {
+        this.dbUrl = dbUrl;
     }
 
     public String getTemplateSourceFileYearly() {
@@ -146,6 +133,22 @@ public class Config {
         this.templateSourceFileMonthly = templateSourceFileMonthly;
     }
 
+    public String getTemplateSourceFileDaily() {
+        return templateSourceFileDaily;
+    }
+
+    public void setTemplateSourceFileDaily(String templateSourceFileDaily) {
+        this.templateSourceFileDaily = templateSourceFileDaily;
+    }
+
+    public String getFormatDateForParseInHourReport() {
+        return formatDateForParseInHourReport;
+    }
+
+    public void setFormatDateForParseInHourReport(String formatDateForParseInHourReport) {
+        this.formatDateForParseInHourReport = formatDateForParseInHourReport;
+    }
+
     public String getType() {
         return type;
     }
@@ -155,7 +158,7 @@ public class Config {
     }
 
     public TypeReport getTypeReport() {
-        return CheckTypeReport.getInstance().getTypeReportBaseOnStr(type);
+        return TypeReport.typeOf(type);
     }
 
     public String getFormatDateForParseInMonthlyReport() {
@@ -174,51 +177,48 @@ public class Config {
         this.formatDateForParseInDayReport = formatDateForParseInDayReport;
     }
 
+    public String getDbDriver() {
+        return dbDriver;
+    }
+
+    public void setDbDriver(String dbDriver) {
+        this.dbDriver = dbDriver;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Config)) return false;
         Config config = (Config) o;
-        return year == config.year &&
-                month == config.month &&
-                Objects.equals(dbHost, config.dbHost) &&
-                Objects.equals(dbPort, config.dbPort) &&
-                Objects.equals(db, config.db) &&
-                Objects.equals(dbuser, config.dbuser) &&
-                Objects.equals(dbpasswd, config.dbpasswd) &&
-                Arrays.equals(localizations, config.localizations) &&
-                Objects.equals(templateSourceFileYearly, config.templateSourceFileYearly) &&
-                Objects.equals(templateSourceFileMonthly, config.templateSourceFileMonthly) &&
-                Objects.equals(templateOutDir, config.templateOutDir) &&
-                Objects.equals(type, config.type) &&
-                Objects.equals(formatDateForParseInMonthlyReport, config.formatDateForParseInMonthlyReport) &&
-                Objects.equals(formatDateForParseInDayReport, config.formatDateForParseInDayReport);
+        return getYear() == config.getYear() && getMonth() == config.getMonth() && getDay() == config.getDay() && Objects.equals(getDbUrl(), config.getDbUrl()) && Objects.equals(getDbDriver(), config.getDbDriver()) && Objects.equals(getDbUser(), config.getDbUser()) && Objects.equals(getDbPassword(), config.getDbPassword()) && Arrays.equals(getLocalizations(), config.getLocalizations()) && Objects.equals(getTemplateSourceFileYearly(), config.getTemplateSourceFileYearly()) && Objects.equals(getTemplateSourceFileMonthly(), config.getTemplateSourceFileMonthly()) && Objects.equals(templateSourceFileDaily, config.templateSourceFileDaily) && Objects.equals(getTemplateOutDir(), config.getTemplateOutDir()) && Objects.equals(getType(), config.getType()) && Objects.equals(getFormatDateForParseInMonthlyReport(), config.getFormatDateForParseInMonthlyReport()) && Objects.equals(getFormatDateForParseInDayReport(), config.getFormatDateForParseInDayReport()) && Objects.equals(formatDateForParseInHourReport, config.formatDateForParseInHourReport);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(dbHost, dbPort, db, dbuser, dbpasswd, year, month, templateSourceFileYearly, templateSourceFileMonthly, templateOutDir, type, formatDateForParseInMonthlyReport, formatDateForParseInDayReport);
-        result = 31 * result + Arrays.hashCode(localizations);
+        int result = Objects.hash(getDbUrl(), getDbDriver(), getDbUser(), getDbPassword(), getYear(), getMonth(), getDay(), getTemplateSourceFileYearly(), getTemplateSourceFileMonthly(), templateSourceFileDaily, getTemplateOutDir(), getType(), getFormatDateForParseInMonthlyReport(), getFormatDateForParseInDayReport(), formatDateForParseInHourReport);
+        result = 31 * result + Arrays.hashCode(getLocalizations());
         return result;
     }
 
     @Override
     public String toString() {
         return "Config{" +
-                "dbHost='" + dbHost + '\'' +
-                ", dbPort='" + dbPort + '\'' +
-                ", db='" + db + '\'' +
-                ", dbuser='" + dbuser + '\'' +
-                ", dbpasswd='" + dbpasswd + '\'' +
+                "dbUrl='" + dbUrl + '\'' +
+                ", dbDriver='" + dbDriver + '\'' +
+                ", dbUser='" + dbUser + '\'' +
+                ", dbPassword='" + dbPassword + '\'' +
                 ", year=" + year +
                 ", month=" + month +
+                ", day=" + day +
                 ", localizations=" + Arrays.toString(localizations) +
                 ", templateSourceFileYearly='" + templateSourceFileYearly + '\'' +
                 ", templateSourceFileMonthly='" + templateSourceFileMonthly + '\'' +
+                ", templateSourceFileDaily='" + templateSourceFileDaily + '\'' +
                 ", templateOutDir='" + templateOutDir + '\'' +
                 ", type='" + type + '\'' +
                 ", formatDateForParseInMonthlyReport='" + formatDateForParseInMonthlyReport + '\'' +
                 ", formatDateForParseInDayReport='" + formatDateForParseInDayReport + '\'' +
+                ", formatDateForParseInHourReport='" + formatDateForParseInHourReport + '\'' +
                 '}';
     }
 }

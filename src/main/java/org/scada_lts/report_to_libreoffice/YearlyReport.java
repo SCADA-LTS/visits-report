@@ -1,63 +1,39 @@
 package org.scada_lts.report_to_libreoffice;
 
-import com.sun.star.sheet.XSpreadsheetDocument;
+import org.jopendocument.dom.spreadsheet.Sheet;
 import org.scada_lts.config.Configuration;
 import org.scada_lts.dao.CountInMonthDao;
 import org.scada_lts.model.CountInMonth;
 import org.scada_lts.utils.CalculationPositionInCalc;
-import java.text.SimpleDateFormat;
+
+import java.io.File;
+import java.util.Date;
 import java.util.Set;
+
+import static org.scada_lts.report_to_libreoffice.PrintLog.error;
+import static org.scada_lts.report_to_libreoffice.PrintLog.p;
 
 /**
  * @project count
- * @autor grzegorz.bylica@gmail.com on 02.10.18
+ * @author grzegorz.bylica@gmail.com on 03.10.18, kamiljarmusik on 03.03.23
  */
 public class YearlyReport extends Report implements IReportType, Runnable{
 
     @Override
-    public void run() {
-        try {
-
-            connect();
-
-            XSpreadsheetDocument doc = openCalc(xContext);
-
-            getSpreadSheet(doc);
-
-            createHeader();
-
-            insertData();
-
-            save(doc);
-
-            p("done");
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        System.exit(0);
-    }
-
-    @Override
-    public void createHeader() {
+    public void createHeader(Sheet sheet) {
         try {
             p("Creating the Header");
 
-
-            SimpleDateFormat sdf = new SimpleDateFormat("yy.MM.dd");
+            if (sheet == null) throw new Exception("sheet is null");
 
             int year = Configuration.getInstance().getConf().getYear();
-
-            if (xSheet == null) new Exception("xSheet is null");
 
             for (int i = 0; Configuration.getInstance().getConf().getLocalizations().length > i; i++) {
                 insertIntoCell(
                         0,
                         37 + i,
                         Configuration.getInstance().getConf().getLocalizations()[i],
-                        xSheet,
+                        sheet,
                         "T"
 
                 );
@@ -66,7 +42,6 @@ public class YearlyReport extends Report implements IReportType, Runnable{
             //actualize data in title
 
             p("date:" + Configuration.getInstance().getDate());
-            p("year:" + year);
             int xMonth = 0;
             int yMonth = 48;
 
@@ -74,19 +49,19 @@ public class YearlyReport extends Report implements IReportType, Runnable{
                     xMonth,
                     yMonth,
                     "(20" + year + ")",
-                    xSheet,
+                    sheet,
                     "T"
 
             );
 
         } catch (Exception e) {
-            e.printStackTrace();
+            error(e.getMessage(), e);
         }
 
     }
 
     @Override
-    public void insertData() {
+    public void insertData(Sheet sheet) {
 
         Set<CountInMonth[]> data = new CountInMonthDao().getAllLocation();
 
@@ -104,10 +79,25 @@ public class YearlyReport extends Report implements IReportType, Runnable{
                         x,
                         y,
                         String.valueOf(counts[i].getCountInLocalizations()),
-                        xSheet, "");
+                        sheet, "V");
 
             }
         }
 
+    }
+
+    @Override
+    public String getReportPath() {
+        int year = Configuration.getInstance().getConf().getYear();
+        String dirOut = Configuration.getInstance().getConf().getTemplateOutDir();
+        String newReport = dirOut + "report_" + year + "_" + new Date().getTime() + ".ods";
+        File file = new File(dirOut);
+        file.mkdirs();
+        return newReport;
+    }
+
+    @Override
+    public String getTemplatePath() {
+        return Configuration.getInstance().getConf().getTemplateSourceFileYearly();
     }
 }

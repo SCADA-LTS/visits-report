@@ -4,29 +4,31 @@ import org.scada_lts.utils.DataUtils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
 /**
  * @project count
- * @autor grzegorz.bylica@gmail.com on 02.10.18
+ * @author grzegorz.bylica@gmail.com on 03.10.18, kamiljarmusik on 03.03.23
  */
-public class InterpretedDataForSelectForBefforeMonth {
+public final class InterpretedDataForSelectForBefforeMonth {
 
-    private Date befforeMonthData;
-
-    public InterpretedDataForSelectForBefforeMonth() {
-        befforeMonthData = DataUtils.getInstance().getBefforeMonth();
+    private InterpretedDataForSelectForBefforeMonth() {
     }
 
-    public String getYearInFormatDataBase() {
+    public static String getYearInFormatDataBase(Calendar cal) {
         DateFormat format = new SimpleDateFormat("yy", Locale.ENGLISH);
-        return format.format(befforeMonthData);
+        return format.format(DataUtils.getBeforeYear(cal));
     }
 
-    public String getMonthInFormatDataBase() {
+    public static String getMonthInFormatDataBase(Calendar cal) {
         DateFormat format = new SimpleDateFormat("MM", Locale.ENGLISH);
-        return format.format(befforeMonthData);
+        return format.format(DataUtils.getBeforeMonth(cal));
     }
 
+    public static String getDayInFormatDataBase(Calendar cal) {
+        DateFormat format = new SimpleDateFormat("dd", Locale.ENGLISH);
+        return format.format(DataUtils.getBeforeDay(cal));
+    }
 }

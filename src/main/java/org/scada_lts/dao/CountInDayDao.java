@@ -1,37 +1,33 @@
 package org.scada_lts.dao;
 
+import org.apache.commons.logging.LogFactory;
 import org.scada_lts.config.Configuration;
 import org.scada_lts.model.CountInDay;
+import org.scada_lts.report_to_libreoffice.PrintLog;
+import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static org.scada_lts.report_to_libreoffice.PrintLog.*;
+import static org.scada_lts.utils.DataUtils.formatPartOfDate;
+
 /**
  * @project count
- * @autor grzegorz.bylica@gmail.com on 28.09.18
+ * @author grzegorz.bylica@gmail.com on 03.10.18, kamiljarmusik on 03.03.23
  */
-public class CountInDayDao implements ICountInDayDao {
-
-    private String formatPartOfDate(int value) {
-        if (value >= 10) {
-            return String.valueOf(value);
-        } else {
-            return "0"+String.valueOf(value);
-        }
-    }
+public class CountInDayDao implements ICountInDao<CountInDay[]> {
 
     private String prepareSQL() {
 
         int year = Configuration.getInstance().getConf().getYear();
         int month = Configuration.getInstance().getConf().getMonth();
 
-        System.out.println(year);
-        System.out.println(month);
+        p("year: " + year);
+        p("month: " + month);
 
         /*return  "SELECT * FROM visitors_by_day_view WHERE \"Date\" ~ '^"
                 + formatPartOfDate(year) + "."
@@ -40,7 +36,7 @@ public class CountInDayDao implements ICountInDayDao {
                 + formatPartOfDate(month) + "."
                 + formatPartOfDate(year) + "'";
 
-        System.out.println(sql);
+        p(sql);
 
         return sql;
     }
@@ -66,13 +62,13 @@ public class CountInDayDao implements ICountInDayDao {
                 try {
                     countInDay.setCountInLocalizations(rs.getInt(localizationName));
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    warn(e.getMessage());
                 }
 
                 counts[i] = countInDay;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            error(e.getMessage(), e);
         }
 
         return counts;
@@ -81,22 +77,7 @@ public class CountInDayDao implements ICountInDayDao {
 
     @Override
     public Set<CountInDay[]> getAllLocation() {
-        Connection connection = new ConnectionFactory().getConnection();
-
-        try {
-            Statement stmt = connection.createStatement();
-            String sql = prepareSQL();
-            ResultSet rs = stmt.executeQuery(sql);
-            Set<CountInDay[]> counts = new HashSet<CountInDay[]>();
-            while(rs.next())
-            {
-                CountInDay[] countInDay = extractCountInDayFromResultSet(rs);
-                counts.add(countInDay);
-            }
-            return counts;
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return null;
+        JdbcTemplate jdbcTemplate = JdbcTemplateFactory.getJdbcTemplate();
+        return new HashSet<>(jdbcTemplate.query(prepareSQL(), (resultSet, i) -> extractCountInDayFromResultSet(resultSet)));
     }
 }

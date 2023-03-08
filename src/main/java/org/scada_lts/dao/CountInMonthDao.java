@@ -1,13 +1,13 @@
 package org.scada_lts.dao;
 
 import org.scada_lts.config.Configuration;
+import org.scada_lts.model.CountInDay;
 import org.scada_lts.model.CountInMonth;
 import org.scada_lts.utils.DataUtils;
+import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -15,50 +15,31 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
+import static org.scada_lts.report_to_libreoffice.PrintLog.*;
+import static org.scada_lts.utils.DataUtils.formatPartOfDate;
+
 /**
  * @project count
- * @autor grzegorz.bylica@gmail.com on 02.10.18
+ * @author grzegorz.bylica@gmail.com on 03.10.18, kamiljarmusik on 03.03.23
  */
-public class CountInMonthDao implements ICountInMonthDao {
+public class CountInMonthDao implements ICountInDao<CountInMonth[]> {
 
     @Override
     public Set<CountInMonth[]> getAllLocation() {
-        Connection connection = new ConnectionFactory().getConnection();
-
-        try {
-            Statement stmt = connection.createStatement();
-            String sql = prepareSQL();
-            ResultSet rs = stmt.executeQuery(sql);
-            Set<CountInMonth[]> counts = new HashSet<CountInMonth[]>();
-            while(rs.next())
-            {
-                CountInMonth[] countInMonth = extractCountInMonthFromResultSet(rs);
-                counts.add(countInMonth);
-            }
-            return counts;
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return null;
-    }
-
-    private String formatPartOfDate(int value) {
-        if (value >= 10) {
-            return String.valueOf(value);
-        } else {
-            return "0"+String.valueOf(value);
-        }
+        JdbcTemplate jdbcTemplate = JdbcTemplateFactory.getJdbcTemplate();
+        return new HashSet<>(jdbcTemplate.query(prepareSQL(), (resultSet, i) -> extractCountInMonthFromResultSet(resultSet)));
     }
 
     private String prepareSQL() {
 
         int year = Configuration.getInstance().getConf().getYear();
-        int month = Configuration.getInstance().getConf().getMonth();
+
+        p("year: " + year);
 
         String sql = "SELECT * FROM visitors_by_month_view WHERE \"date\" like '"
                 + formatPartOfDate(year) + ".%'";
 
-        System.out.println(sql);
+        p(sql);
 
         return sql;
     }
@@ -78,20 +59,20 @@ public class CountInMonthDao implements ICountInMonthDao {
                 String formtDate = Configuration.getInstance().getConf().getFormatDateForParseInMonthlyReport();
                 DateFormat format = new SimpleDateFormat("yy.MM", Locale.ENGLISH);
                 Date date = format.parse(strDate);
-                int month = DataUtils.getInstance().getMonth(date);
+                int month = DataUtils.getMonth(date);
                 countInMonth.setMonth( month );
                 String localizationName = localizations[i];
                 countInMonth.setLocation(localizationName);
                 try {
                     countInMonth.setCountInLocalizations(rs.getInt(localizationName));
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    warn(e.getMessage());
                 }
 
                 counts[i] = countInMonth;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            error(e.getMessage(), e);
         }
 
         return counts;

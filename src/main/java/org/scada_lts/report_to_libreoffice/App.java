@@ -3,8 +3,10 @@ package org.scada_lts.report_to_libreoffice;
 import org.scada_lts.config.Configuration;
 import org.scada_lts.config.TypeReport;
 
-public class App extends Log {
+import static org.scada_lts.report_to_libreoffice.PrintLog.error;
+import static org.scada_lts.report_to_libreoffice.PrintLog.p;
 
+public class App {
 
     public static void main(String[] args) throws Exception {
 
@@ -15,14 +17,21 @@ public class App extends Log {
 
             TypeReport tr = Configuration.getInstance().getConf().getTypeReport();
 
-            if (tr == TypeReport.MONTHLY) {
-                new MonthlyReport().run();
-            } else if (tr == TypeReport.YEARLY) {
-                new YearlyReport().run();
+            switch (tr) {
+                case DAILY:
+                    new DailyReport().run();
+                    break;
+                case MONTHLY:
+                    new MonthlyReport().run();
+                    break;
+                case YEARLY:
+                    new YearlyReport().run();
+                    break;
+                default:
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            error(e.getMessage(), e);
         }
 
 
