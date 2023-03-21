@@ -1,4 +1,4 @@
-package org.scada_lts.report_to_libreoffice;
+package org.scada_lts.report;
 
 import org.apache.commons.logging.LogFactory;
 

@@ -1,15 +1,16 @@
-package org.scada_lts.report_to_libreoffice;
+package org.scada_lts.report;
 
 
 import org.jopendocument.dom.ODValueType;
 import org.jopendocument.dom.spreadsheet.MutableCell;
 import org.jopendocument.dom.spreadsheet.Sheet;
 import org.jopendocument.dom.spreadsheet.SpreadSheet;
+import org.scada_lts.utils.FileUtil;
 
 import java.io.File;
 
-import static org.scada_lts.report_to_libreoffice.PrintLog.error;
-import static org.scada_lts.report_to_libreoffice.PrintLog.p;
+import static org.scada_lts.report.PrintLog.error;
+import static org.scada_lts.report.PrintLog.p;
 
 
 /**
@@ -19,19 +20,21 @@ import static org.scada_lts.report_to_libreoffice.PrintLog.p;
 public abstract class Report implements IReportType {
 
     public final void run() {
-        try {
-            String reportOdsPath = getReportPath();
-            String templateOdsPath = getTemplatePath();
-            SpreadSheet spreadSheet = SpreadSheet.createFromFile(new File(templateOdsPath));
-            Sheet sheet = spreadSheet.getSheet(0);
-            createHeader(sheet);
-            insertData(sheet);
-            spreadSheet.saveAs(new File(reportOdsPath));
-            p("done");
+        String reportOdsPath = getReportPath();
+        String templateOdsPath = getTemplatePath();
+        FileUtil.getFileFromJar(templateOdsPath).ifPresent(file -> {
+            try {
+                SpreadSheet spreadSheet = SpreadSheet.createFromFile(file);
+                Sheet sheet = spreadSheet.getSheet(0);
+                createHeader(sheet);
+                insertData(sheet);
+                spreadSheet.saveAs(new File(reportOdsPath));
+                p("done");
 
-        } catch (Exception e) {
-            error(e.getMessage(), e);
-        }
+            } catch (Exception e) {
+                error(e.getMessage(), e);
+            }
+        });
 
         System.exit(0);
 

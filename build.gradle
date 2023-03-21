@@ -43,11 +43,17 @@ task fatJar(type: Jar) {
     manifest {
         attributes 'Implementation-Title': 'Gradle Jar File Example',
                 'Implementation-Version': version,
-                'Main-Class': 'org.scada_lts.report_to_libreoffice.App'
+                'Main-Class': 'org.scada_lts.report.App'
     }
     baseName = project.name + '-standalone'
     from {
         configurations.implementation.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    from("config/") {
+        include "conf.properties"
+    }
+    into("template/") {
+        from("template")
     }
     exclude "**/Log4j2Plugins.dat"
     with jar

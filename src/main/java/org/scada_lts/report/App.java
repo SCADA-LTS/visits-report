@@ -1,10 +1,10 @@
-package org.scada_lts.report_to_libreoffice;
+package org.scada_lts.report;
 
 import org.scada_lts.config.Configuration;
 import org.scada_lts.config.TypeReport;
 
-import static org.scada_lts.report_to_libreoffice.PrintLog.error;
-import static org.scada_lts.report_to_libreoffice.PrintLog.p;
+import static org.scada_lts.report.PrintLog.error;
+import static org.scada_lts.report.PrintLog.p;
 
 public class App {
 

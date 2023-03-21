@@ -10,7 +10,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static org.scada_lts.report_to_libreoffice.PrintLog.*;
+import static org.scada_lts.report.PrintLog.*;
 import static org.scada_lts.utils.DataUtils.formatPartOfDate;
 
 /**

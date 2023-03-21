@@ -13,7 +13,7 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-import static org.scada_lts.report_to_libreoffice.PrintLog.*;
+import static org.scada_lts.report.PrintLog.*;
 import static org.scada_lts.utils.DataUtils.formatPartOfDate;
 
 /**
