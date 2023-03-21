@@ -4,7 +4,7 @@ import org.jopendocument.dom.spreadsheet.MutableCell;
 import org.jopendocument.dom.spreadsheet.Sheet;
 import org.jopendocument.dom.spreadsheet.SpreadSheet;
 import org.scada_lts.config.Configuration;
-import org.scada_lts.dao.CountInHourDao;
+import org.scada_lts.dao.DailyReportDao;
 import org.scada_lts.model.CountInHour;
 import org.scada_lts.utils.CalculationPositionInCalc;
 
@@ -81,7 +81,7 @@ public class DailyReport extends Report implements IReportType, Runnable{
     @Override
     public void insertData(Sheet sheet) {
 
-        Set<CountInHour[]> data = new CountInHourDao().getAllLocation();
+        Set<CountInHour[]> data = new DailyReportDao().getAllLocation();
 
         p("count day in range:" + data.size());
 

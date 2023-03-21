@@ -6,6 +6,6 @@ import java.util.Set;
  * @project count
  * @author grzegorz.bylica@gmail.com on 03.10.18, kamiljarmusik on 03.03.23
  */
-public interface ICountInDao<T> {
+public interface IReportDao<T> {
     Set<T> getAllLocation();
 }

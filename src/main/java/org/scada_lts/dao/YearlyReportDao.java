@@ -1,7 +1,6 @@
 package org.scada_lts.dao;
 
 import org.scada_lts.config.Configuration;
-import org.scada_lts.model.CountInDay;
 import org.scada_lts.model.CountInMonth;
 import org.scada_lts.utils.DataUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -22,7 +21,7 @@ import static org.scada_lts.utils.DataUtils.formatPartOfDate;
  * @project count
  * @author grzegorz.bylica@gmail.com on 03.10.18, kamiljarmusik on 03.03.23
  */
-public class CountInMonthDao implements ICountInDao<CountInMonth[]> {
+public class YearlyReportDao implements IReportDao<CountInMonth[]> {
 
     @Override
     public Set<CountInMonth[]> getAllLocation() {
@@ -56,8 +55,8 @@ public class CountInMonthDao implements ICountInDao<CountInMonth[]> {
                 CountInMonth countInMonth = new CountInMonth();
                 String strDate = rs.getString(1);
                 // "yy.MM"
-                String formtDate = Configuration.getInstance().getConf().getFormatDateForParseInMonthlyReport();
-                DateFormat format = new SimpleDateFormat("yy.MM", Locale.ENGLISH);
+                String formtDate = Configuration.getInstance().getConf().getFormatDateForParseInYearlyReport();
+                DateFormat format = new SimpleDateFormat(formtDate, Locale.ENGLISH);
                 Date date = format.parse(strDate);
                 int month = DataUtils.getMonth(date);
                 countInMonth.setMonth( month );

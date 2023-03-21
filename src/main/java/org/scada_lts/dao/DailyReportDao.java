@@ -20,7 +20,7 @@ import static org.scada_lts.utils.DataUtils.formatPartOfDate;
  * @project count
  * @author kamiljarmusik on 04.03.23
  */
-public class CountInHourDao implements ICountInDao<CountInHour[]> {
+public class DailyReportDao implements IReportDao<CountInHour[]> {
 
     private String prepareSQL() {
 
@@ -55,7 +55,7 @@ public class CountInHourDao implements ICountInDao<CountInHour[]> {
                 CountInHour countInDay = new CountInHour();
                 String strDate = rs.getString(1);
                 // eg. yy.MM.dd
-                String formatDate = Configuration.getInstance().getConf().getFormatDateForParseInHourReport();
+                String formatDate = Configuration.getInstance().getConf().getFormatDateForParseInDailyReport();
                 DateFormat format = new SimpleDateFormat(formatDate, Locale.ENGLISH);
                 Date date = format.parse(strDate);
                 countInDay.setDate(date);

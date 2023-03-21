@@ -58,9 +58,9 @@ public class Configuration {
             String tmpLocalizations = prop.getProperty("report.localizations");
             String type = prop.getProperty("report.type");
 
+            String formatDateForParseInYearlyReport = prop.getProperty("report.formatDateForParseInYearlyReport");
             String formatDateForParseInMonthlyReport = prop.getProperty("report.formatDateForParseInMonthlyReport");
-            String formatDateForParseInDayReport = prop.getProperty("report.formatDateForParseInDayReport");
-            String formatDateForParseInHourReport = prop.getProperty("report.formatDateForParseInHourReport");
+            String formatDateForParseInDailyReport = prop.getProperty("report.formatDateForParseInDailyReport");
 
 
             TypeReport tr = type == null ? TypeReport.MONTHLY : TypeReport.typeOf(type);
@@ -89,9 +89,9 @@ public class Configuration {
                     templateSourceFileDaily,
                     templateOutDir,
                     tr.toString(),
+                    formatDateForParseInYearlyReport,
                     formatDateForParseInMonthlyReport,
-                    formatDateForParseInDayReport,
-                    formatDateForParseInHourReport
+                    formatDateForParseInDailyReport
             );
 
 

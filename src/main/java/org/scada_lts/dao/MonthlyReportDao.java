@@ -1,9 +1,7 @@
 package org.scada_lts.dao;
 
-import org.apache.commons.logging.LogFactory;
 import org.scada_lts.config.Configuration;
 import org.scada_lts.model.CountInDay;
-import org.scada_lts.report_to_libreoffice.PrintLog;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.sql.ResultSet;
@@ -19,7 +17,7 @@ import static org.scada_lts.utils.DataUtils.formatPartOfDate;
  * @project count
  * @author grzegorz.bylica@gmail.com on 03.10.18, kamiljarmusik on 03.03.23
  */
-public class CountInDayDao implements ICountInDao<CountInDay[]> {
+public class MonthlyReportDao implements IReportDao<CountInDay[]> {
 
     private String prepareSQL() {
 
@@ -53,7 +51,7 @@ public class CountInDayDao implements ICountInDao<CountInDay[]> {
                 CountInDay countInDay = new CountInDay();
                 String strDate = rs.getString(1);
                 // eg. yy.MM.dd
-                String formatDate = Configuration.getInstance().getConf().getFormatDateForParseInDayReport();
+                String formatDate = Configuration.getInstance().getConf().getFormatDateForParseInMonthlyReport();
                 DateFormat format = new SimpleDateFormat(formatDate, Locale.ENGLISH);
                 Date date = format.parse(strDate);
                 countInDay.setDate(date);

@@ -2,7 +2,7 @@ package org.scada_lts.report_to_libreoffice;
 
 import org.jopendocument.dom.spreadsheet.Sheet;
 import org.scada_lts.config.Configuration;
-import org.scada_lts.dao.CountInMonthDao;
+import org.scada_lts.dao.YearlyReportDao;
 import org.scada_lts.model.CountInMonth;
 import org.scada_lts.utils.CalculationPositionInCalc;
 
@@ -63,7 +63,7 @@ public class YearlyReport extends Report implements IReportType, Runnable{
     @Override
     public void insertData(Sheet sheet) {
 
-        Set<CountInMonth[]> data = new CountInMonthDao().getAllLocation();
+        Set<CountInMonth[]> data = new YearlyReportDao().getAllLocation();
 
         p("count day in range:" + data.size());
 

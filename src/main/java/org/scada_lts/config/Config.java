@@ -22,9 +22,9 @@ public class Config {
     private String templateSourceFileDaily;
     private String templateOutDir;
     private String type; //yearly, monthly
+    private String formatDateForParseInYearlyReport;
     private String formatDateForParseInMonthlyReport;
-    private String formatDateForParseInDayReport;
-    private String formatDateForParseInHourReport;
+    private String formatDateForParseInDailyReport;
 
     public Config() {
 
@@ -33,8 +33,8 @@ public class Config {
     public Config(String dbUrl, String dbDriver, String dbuser, String dbpasswd, int year, int month, int day,
                   String[] localizations, String templateSourceFileYearly, String templateSourceFileMonthly,
                   String templateSourceFileDaily, String templateOutDir, String type,
-                  String formatDateForParseInMonthlyReport, String formatDateForParseInDayReport,
-                  String formatDateForParseInHourReport) {
+                  String formatDateForParseInYearlyReport, String formatDateForParseInMonthlyReport,
+                  String formatDateForParseInDailyReport) {
         this.dbUrl = dbUrl;
         this.dbDriver = dbDriver;
         this.dbUser = dbuser;
@@ -48,9 +48,9 @@ public class Config {
         this.templateSourceFileDaily = templateSourceFileDaily;
         this.templateOutDir = templateOutDir;
         this.type = type;
+        this.formatDateForParseInYearlyReport = formatDateForParseInYearlyReport;
         this.formatDateForParseInMonthlyReport = formatDateForParseInMonthlyReport;
-        this.formatDateForParseInDayReport = formatDateForParseInDayReport;
-        this.formatDateForParseInHourReport = formatDateForParseInHourReport;
+        this.formatDateForParseInDailyReport = formatDateForParseInDailyReport;
     }
 
     public String getDbUser() {
@@ -141,12 +141,12 @@ public class Config {
         this.templateSourceFileDaily = templateSourceFileDaily;
     }
 
-    public String getFormatDateForParseInHourReport() {
-        return formatDateForParseInHourReport;
+    public String getFormatDateForParseInDailyReport() {
+        return formatDateForParseInDailyReport;
     }
 
-    public void setFormatDateForParseInHourReport(String formatDateForParseInHourReport) {
-        this.formatDateForParseInHourReport = formatDateForParseInHourReport;
+    public void setFormatDateForParseInDailyReport(String formatDateForParseInDailyReport) {
+        this.formatDateForParseInDailyReport = formatDateForParseInDailyReport;
     }
 
     public String getType() {
@@ -161,20 +161,20 @@ public class Config {
         return TypeReport.typeOf(type);
     }
 
+    public String getFormatDateForParseInYearlyReport() {
+        return formatDateForParseInYearlyReport;
+    }
+
+    public void setFormatDateForParseInYearlyReport(String formatDateForParseInYearlyReport) {
+        this.formatDateForParseInYearlyReport = formatDateForParseInYearlyReport;
+    }
+
     public String getFormatDateForParseInMonthlyReport() {
         return formatDateForParseInMonthlyReport;
     }
 
     public void setFormatDateForParseInMonthlyReport(String formatDateForParseInMonthlyReport) {
         this.formatDateForParseInMonthlyReport = formatDateForParseInMonthlyReport;
-    }
-
-    public String getFormatDateForParseInDayReport() {
-        return formatDateForParseInDayReport;
-    }
-
-    public void setFormatDateForParseInDayReport(String formatDateForParseInDayReport) {
-        this.formatDateForParseInDayReport = formatDateForParseInDayReport;
     }
 
     public String getDbDriver() {
@@ -190,12 +190,12 @@ public class Config {
         if (this == o) return true;
         if (!(o instanceof Config)) return false;
         Config config = (Config) o;
-        return getYear() == config.getYear() && getMonth() == config.getMonth() && getDay() == config.getDay() && Objects.equals(getDbUrl(), config.getDbUrl()) && Objects.equals(getDbDriver(), config.getDbDriver()) && Objects.equals(getDbUser(), config.getDbUser()) && Objects.equals(getDbPassword(), config.getDbPassword()) && Arrays.equals(getLocalizations(), config.getLocalizations()) && Objects.equals(getTemplateSourceFileYearly(), config.getTemplateSourceFileYearly()) && Objects.equals(getTemplateSourceFileMonthly(), config.getTemplateSourceFileMonthly()) && Objects.equals(templateSourceFileDaily, config.templateSourceFileDaily) && Objects.equals(getTemplateOutDir(), config.getTemplateOutDir()) && Objects.equals(getType(), config.getType()) && Objects.equals(getFormatDateForParseInMonthlyReport(), config.getFormatDateForParseInMonthlyReport()) && Objects.equals(getFormatDateForParseInDayReport(), config.getFormatDateForParseInDayReport()) && Objects.equals(formatDateForParseInHourReport, config.formatDateForParseInHourReport);
+        return getYear() == config.getYear() && getMonth() == config.getMonth() && getDay() == config.getDay() && Objects.equals(getDbUrl(), config.getDbUrl()) && Objects.equals(getDbDriver(), config.getDbDriver()) && Objects.equals(getDbUser(), config.getDbUser()) && Objects.equals(getDbPassword(), config.getDbPassword()) && Arrays.equals(getLocalizations(), config.getLocalizations()) && Objects.equals(getTemplateSourceFileYearly(), config.getTemplateSourceFileYearly()) && Objects.equals(getTemplateSourceFileMonthly(), config.getTemplateSourceFileMonthly()) && Objects.equals(templateSourceFileDaily, config.templateSourceFileDaily) && Objects.equals(getTemplateOutDir(), config.getTemplateOutDir()) && Objects.equals(getType(), config.getType()) && Objects.equals(getFormatDateForParseInYearlyReport(), config.getFormatDateForParseInYearlyReport()) && Objects.equals(getFormatDateForParseInMonthlyReport(), config.getFormatDateForParseInMonthlyReport()) && Objects.equals(formatDateForParseInDailyReport, config.formatDateForParseInDailyReport);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(getDbUrl(), getDbDriver(), getDbUser(), getDbPassword(), getYear(), getMonth(), getDay(), getTemplateSourceFileYearly(), getTemplateSourceFileMonthly(), templateSourceFileDaily, getTemplateOutDir(), getType(), getFormatDateForParseInMonthlyReport(), getFormatDateForParseInDayReport(), formatDateForParseInHourReport);
+        int result = Objects.hash(getDbUrl(), getDbDriver(), getDbUser(), getDbPassword(), getYear(), getMonth(), getDay(), getTemplateSourceFileYearly(), getTemplateSourceFileMonthly(), templateSourceFileDaily, getTemplateOutDir(), getType(), getFormatDateForParseInYearlyReport(), getFormatDateForParseInMonthlyReport(), formatDateForParseInDailyReport);
         result = 31 * result + Arrays.hashCode(getLocalizations());
         return result;
     }
@@ -216,9 +216,9 @@ public class Config {
                 ", templateSourceFileDaily='" + templateSourceFileDaily + '\'' +
                 ", templateOutDir='" + templateOutDir + '\'' +
                 ", type='" + type + '\'' +
-                ", formatDateForParseInMonthlyReport='" + formatDateForParseInMonthlyReport + '\'' +
-                ", formatDateForParseInDayReport='" + formatDateForParseInDayReport + '\'' +
-                ", formatDateForParseInHourReport='" + formatDateForParseInHourReport + '\'' +
+                ", formatDateForParseInMonthlyReport='" + formatDateForParseInYearlyReport + '\'' +
+                ", formatDateForParseInDayReport='" + formatDateForParseInMonthlyReport + '\'' +
+                ", formatDateForParseInHourReport='" + formatDateForParseInDailyReport + '\'' +
                 '}';
     }
 }
