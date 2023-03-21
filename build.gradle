@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'report-to-libre-office'
-version '1.0-SNAPSHOT'
+version '1.0.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 
